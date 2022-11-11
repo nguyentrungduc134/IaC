@@ -1,0 +1,13 @@
+SSH authentication failed! This is typically caused by the public/private
+keypair for the SSH user not being properly set on the guest VM. Please
+verify that the guest VM is setup with the proper public key, and that
+the private key path for Vagrant is setup properly as well.
+
+#error: private key not set
+solution: set   config.ssh.insert_key = true, insert to vagrant dir
+mount drvfs to allow chmod 600
+sudo umount /mnt/d
+cd -
+sudo mount -t drvfs D: /mnt/D -o metadata
+
+
