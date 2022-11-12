@@ -11,7 +11,7 @@ cd -
 sudo mount -t drvfs D: /mnt/d -o metadata
 #jenkins provision script
 fix /var/lib/jenkins/ not exist error
-
+no need to add user, add private network
 
 
 

@@ -1,0 +1,9 @@
+#add hosted  network address to virtualbox
+    zabbix.vm.network :private_network, ip: "192.168.56.98"
+#change repos to update Centos 8
+        cd /etc/yum.repos.d
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+        yum update -y
+
+
+
