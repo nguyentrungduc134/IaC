@@ -8,6 +8,10 @@ solution: set   config.ssh.insert_key = true, insert to vagrant dir
 mount drvfs to allow chmod 600
 sudo umount /mnt/d
 cd -
-sudo mount -t drvfs D: /mnt/D -o metadata
+sudo mount -t drvfs D: /mnt/d -o metadata
+#jenkins provision script
+fix /var/lib/jenkins/ not exist error
+
+
 
 
