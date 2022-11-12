@@ -12,6 +12,10 @@ sudo mount -t drvfs D: /mnt/d -o metadata
 #jenkins provision script
 fix /var/lib/jenkins/ not exist error
 no need to add user, add private network
+---
+nodejs
+#insert key   config.ssh.insert_key = true
+#add /usr/local/bin/forever to avoid bug https://codesti.com/issue/geerlingguy/ansible-vagrant-examples/56
 
 
 
