@@ -1,0 +1,18 @@
+#inventory multi group [multi:children] [multi:vars]
+#default run parallel, limit using fork -f
+#run multi host, all or limit
+---
+#idempotence: check before running, reusable
+#with_items: variable list
+#state: state of service
+---
+# playbook: --limit limit host, --list-hosts
+#remote-user(-u) --become: sudo run, --become-user: run sudo with user
+#--inventory(-i) specify intentory, -e --extra-vars
+---
+#App .js and npm read json to install dependencies
+#register: used to decide latter whether to run
+#changed_when: specify the condition of change to ansible
+---
+#when: specify the condition to do something
+
