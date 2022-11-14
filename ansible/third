@@ -1,3 +1,15 @@
+1a
+#lineinfile check to see if there is this line, can be used with regex
+#chdir, create in command, shell module chdir: run at this dir, create: not run if this file exists
+#?
+---
+b
+#inventory file /etc/ansible/hosts
+include host group, single host must put above group
+#need to have ssh key access first to run any simple command
+#basic playbook
+--- YAML start, host:all host to run, tasks: task to run, name: task, yum: module
+
 c
 #inventory multi group [multi:children] [multi:vars]
 #default run parallel, limit using fork -f
@@ -26,4 +38,4 @@ LAMP
 ---
 b
 #file module can create file and link
-#Jinja2 template can use variable in it
+#Jinja2 template can use variable in it to provide apache config
