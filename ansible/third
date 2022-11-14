@@ -45,3 +45,8 @@ c
 #ignore_errors: ignore known error
 #delegate_to: delegate task to other hosts
 #local_action: task run at localhost
+4a
+#ansible-galaxy init role name to init tree of the role
+#role help easy to see run  process, copy codes with same part to the role and replace
+#default dir have default var, easily be replaced in the main playbook, var dir have higher precedence
+
