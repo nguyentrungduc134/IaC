@@ -14,5 +14,10 @@
 #register: used to decide latter whether to run
 #changed_when: specify the condition of change to ansible
 ---
+LAMP
 #when: specify the condition to do something
-
+#pre_task, post_task, seperate with main task
+#handler: at the end, trigger by  notify of changed from a task
+---
+#file module can create file and link
+#Jinja2 template can use variable in it
