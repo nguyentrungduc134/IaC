@@ -1,7 +1,7 @@
 1a
 #lineinfile check to see if there is this line, can be used with regex
 #chdir, create in command, shell module chdir: run at this dir, create: not run if this file exists
-#?
+#include can use include other playbooks
 ---
 b
 #inventory file /etc/ansible/hosts
@@ -39,3 +39,9 @@ LAMP
 b
 #file module can create file and link
 #Jinja2 template can use variable in it to provide apache config
+#failed_when: specify condition of fail to ansible
+---
+c
+#ignore_errors: ignore known error
+#delegate_to: delegate task to other hosts
+#local_action: task run at localhost
