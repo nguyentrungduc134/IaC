@@ -1,6 +1,0 @@
-#inventory file /etc/ansible/hosts
-include host group, single host must put above group
-#need to have ssh key access first to run any simple command
-#basic playbook
---- YAML start, host:all host to run, tasks: task to run, name: task, yum: module
-
