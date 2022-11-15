@@ -49,4 +49,8 @@ c
 #ansible-galaxy init role name to init tree of the role
 #role help easy to see run  process, copy codes with same part to the role and replace
 #default dir have default var, easily be replaced in the main playbook, var dir have higher precedence
+b
+#ansible also have cloud module to use cloud API (aws, digitalacean)
+#dynamic inventory using result of python script to get list of servers -i file.py
+#
 
