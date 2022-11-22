@@ -54,3 +54,24 @@ b
 #dynamic inventory using result of python script to get list of servers -i file.py
 #use dynamic inventory to provision PaaS (like apache Solr)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical:
+#build lamp on aws
