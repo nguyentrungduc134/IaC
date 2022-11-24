@@ -53,7 +53,8 @@ b
 #ansible also have cloud module to use cloud API (aws, digitalacean)
 #dynamic inventory using result of python script to get list of servers -i file.py
 #use dynamic inventory to provision PaaS (like apache Solr)
-
+---
+#using serial run (fork) to gurantee no down time when deploying, can be number of percentage
 
 
 
