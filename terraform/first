@@ -1,3 +1,7 @@
 1
 ---
 #to provision create main.tf , terraform plan, terraform init
+#use user_data to configure script run
+#terraform use implicit dependencies, parses these dependencies, builds a dependency graph from them
+---
+
