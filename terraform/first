@@ -1,8 +1,13 @@
 1
 ---
 #first export aws access key to .bashrc file
+##terraform init create configuration and provider plugins
 #to provision create main.tf , terraform plan, terraform init
+---
 #use user_data to configure script run
 #terraform use implicit dependencies, parses these dependencies, builds a dependency graph from them
----
 #terraform use variable to use in and out of the code
+---
+#use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
+#use lifecycle create_before_destroy when you replace an instance that is a dependency
+#data source add api data and make it available in the rest of the code
