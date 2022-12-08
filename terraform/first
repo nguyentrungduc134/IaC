@@ -11,3 +11,7 @@
 #use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
 #use lifecycle create_before_destroy when you replace an instance that is a dependency
 #data source add api data and make it available in the rest of the code, other source call it's attributes
+--
+2
+---
+#terraform save state and diff to apply change
