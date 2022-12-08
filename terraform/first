@@ -15,3 +15,4 @@
 2
 ---
 #terraform save state and diff to apply change
+#should not save state in version control but best in cloud storage
