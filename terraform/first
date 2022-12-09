@@ -19,3 +19,4 @@
 #terraform use workspaces to store multiple seperate states
 ---
 #shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
+#could seperate .tf file because terraform just read .tf file
