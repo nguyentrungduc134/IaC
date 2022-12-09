@@ -16,3 +16,6 @@
 ---
 #terraform save state and diff to apply change
 #should not save state in version control but best in cloud storage
+#terraform use workspaces to store multiple seperate states
+---
+#shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
