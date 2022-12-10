@@ -7,3 +7,6 @@ https://github.com/JeffReeves/WSL-Ansible-Vagrant-VirtualBox/blob/main/Vagrantfi
 #fix some ssh error using a plugin
 https://blog.thenets.org/how-to-run-vagrant-on-wsl-2/
 https://github.com/Karandash8/virtualbox_WSL2
+---
+#docker minimize langauge pack for centos
+https://github.com/CentOS/sig-cloud-instance-images/issues/71

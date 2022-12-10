@@ -23,3 +23,5 @@
 #terraform_remote_state is terraform data source that take output of other resource state
 ---
 #file reads a file from disk and returns its literal contents without any template interpretation.
+#templatefile is a function read file (bash script) and use variable to create template
+templatefile(path, vars)
