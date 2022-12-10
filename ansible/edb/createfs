@@ -1,0 +1,76 @@
+
+---
+# tasks file for create_fs
+    - name: disable selinux
+      selinux:
+        state: disabled
+
+
+    - name: backup repos
+      shell:
+        mv `ls /etc/yum.repos.d/*.repo -I local.repo` /tmp/
+      ignore_errors: yes
+    - name: create file local repos
+      file:
+        path: /etc/yum.repos.d/local.repo
+        state: touch
+
+    - name: add new local repos
+      lineinfile:
+         path: /etc/yum.repos.d/local.repo
+         line: "{{ item }}"
+         state: present
+         backup: yes
+      with_items:
+        - "[CentOS79] "
+        - "name=CentOS x86_64 "
+        - "baseurl=file:///media "
+        - "gpgcheck=0 "
+        - "enabled=1  "
+
+
+    - name: Mount volume
+      mount:
+        src: /dev/cdrom
+        path: /media
+        state: mounted
+        fstype: iso9660
+
+    - name: Install lvm2
+      yum:
+        name: lvm2
+        state: present
+
+    - name: creating volume group for pg9
+      lvg:
+        vg: "{{ vg_pg9 }}"
+        pvs: /dev/sdb
+
+    - name: creating volume group for pg13
+      lvg:
+        vg: "{{ vg_pg13 }}"
+        pvs: /dev/sdc
+
+    - name: create lvm for pg9
+      lvol:
+        vg: "{{ vg_pg9 }}"
+        size: 100%FREE
+        lv: "{{ lv_pg9 }}"
+        shrink: no
+
+    - name: create lvm for pg13
+      lvol:
+        vg: "{{ vg_pg13 }}"
+        size: 100%FREE
+        lv: " {{ lv_pg13 }}"
+        shrink: no
+
+    - name: format filesystem
+      filesystem:
+        fstype: xfs
+        dev: "{{ item }}"
+      with_items:
+       - /dev/"{{ vg_pg9 }}"/"{{ lv_pg9 }}"
+       - /dev/"{{ vg_pg13 }}"/"{{ lv_pg13 }}"
+
+

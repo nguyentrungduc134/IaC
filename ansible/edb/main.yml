@@ -1,0 +1,9 @@
+
+---
+- hosts: edbup
+  become: yes
+  roles:
+    - { role: create_fs }
+    - { role: installpg9 }
+
+
