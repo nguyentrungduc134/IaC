@@ -20,3 +20,4 @@
 ---
 #shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
 #could seperate .tf file because terraform just read .tf file
+#terraform_remote_state is terraform data source that take output of other resource state
