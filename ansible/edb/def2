@@ -1,0 +1,9 @@
+---
+# defaults file for create_fs
+
+vg_pg9: vg_data01
+vg_pg13: vg_data
+lv_pg9: lv_pgdata
+lv_pg13: lv_pgdata13
+
+
