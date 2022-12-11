@@ -29,3 +29,4 @@ templatefile(path, vars)
 ---
 #Modules are reusable Terraform configurations (use in many enviroments stage/prod)
 #could define variable parameters in module and input it in main.tf
+#local variable is defined in module and can not be inputed ( like http_port)

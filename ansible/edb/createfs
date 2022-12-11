@@ -62,7 +62,7 @@
       lvol:
         vg: "{{ vg_pg13 }}"
         size: 100%FREE
-        lv: " {{ lv_pg13 }}"
+        lv: "{{ lv_pg13 }}"
         shrink: no
 
     - name: format filesystem
@@ -70,7 +70,7 @@
         fstype: xfs
         dev: "{{ item }}"
       with_items:
-       - /dev/"{{ vg_pg9 }}"/"{{ lv_pg9 }}"
-       - /dev/"{{ vg_pg13 }}"/"{{ lv_pg13 }}"
+       - /dev/{{ vg_pg9 }}/{{ lv_pg9 }}
+       - /dev/{{ vg_pg13 }}/{{ lv_pg13 }}
 
 
