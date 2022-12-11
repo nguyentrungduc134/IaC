@@ -25,3 +25,7 @@
 #file reads a file from disk and returns its literal contents without any template interpretation.
 #templatefile is a function read file (bash script) and use variable to create template
 templatefile(path, vars)
+#rendered attribute: result of template
+---
+#Modules are reusable Terraform configurations (use in many enviroments stage/prod)
+#could define variable parameters in module and input it in main.tf

@@ -55,8 +55,9 @@ b
 #use dynamic inventory to provision PaaS (like apache Solr)
 ---
 #using serial run (fork) to gurantee no down time when deploying, can be number of percentage
-
-
+#ansible config show in --version and can be inited
+https://docs.ansible.com/ansible/latest/reference_appendices/config.html
+#some typing error like space in {{ }} variable could lead to weird error
 
 
 
