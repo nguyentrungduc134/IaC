@@ -72,5 +72,15 @@
       with_items:
        - /dev/{{ vg_pg9 }}/{{ lv_pg9 }}
        - /dev/{{ vg_pg13 }}/{{ lv_pg13 }}
-
-
+    - name: mount the filesystem pg9
+      mount:
+        src: "/dev/{{ vg_pg9 }}/{{ lv_pg9 }}"
+        path: "{{ mount_pg9 }}"
+        state: mounted
+        fstype: xfs
+    - name: mount the filesystem pg13         
+      mount:
+        src: "/dev/{{ vg_pg13 }}/{{ lv_pg13 }}"
+        path: "{{ mount_pg13 }}"
+        state: mounted
+        fstype: xfs
