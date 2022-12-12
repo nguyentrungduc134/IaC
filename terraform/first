@@ -28,5 +28,7 @@ templatefile(path, vars)
 #rendered attribute: result of template
 ---
 #Modules are reusable Terraform configurations (use in many enviroments stage/prod)
-#could define variable parameters in module and input it in main.tf
+#could define variable parameters in module and input it in main.tf, also could output from module
 #local variable is defined in module and can not be inputed ( like http_port)
+---
+#use path. reference to read module file location
