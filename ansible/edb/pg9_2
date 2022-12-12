@@ -1,0 +1,64 @@
+---
+    - name: check install file edb 9
+      file:
+        path: "{{ db_install_file }}"
+        mode: '0700'
+    - name: add group pgtest
+      group:
+        name: "{{ group_name }}"
+        state: present
+    - name: add user pgtest
+      user:
+        name: "{{ user_name }}"
+        state: present
+        group: pgtest
+        createhome: yes
+    - name: install edb 9
+      shell:
+        /"{{ db_install_file }}" --mode unattended --superaccount {{ user_name }} --serviceaccount {{ user_name }} --datadir {{ data_dir }} --installer-language en --serverport 5445 --prefix {{ install_dir }} --locale en_US.utf8 --superpassword 123456
+    - name: change ownership of data dir and install dir
+      file:
+        path: "{{ item }}"
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+      with_items:
+        - /PG/
+        - /pgdata/
+    - name: expor all enviroment variables related to the install, must be correct
+      lineinfile:
+        path: /home/pgtest/.bash_profile
+        line: "{{ item }}"
+      with_items:
+        - "export EDBHOME={{ install_dir }}"
+        - "export PATH=$EDBHOME/bin:$PATH"
+        - "export PGDATA={{ data_dir }}"
+        - "export PGDATABASE=edb"
+        - "export PGUSER=pgtest"
+        - "export PGPORT=5445"
+      become_user: pgtest
+    - name: expor the saved variables
+      shell:
+        source /home/pgtest/.bash_profile
+      become_user: pgtest
+    - name: create sql file to import
+      file:
+        path: /home/pgtest/init.sql
+        state: touch
+    - name: create a sql to import data
+      lineinfile:
+        path: /home/pgtest/init.sql
+        line: "{{ item }}"
+      with_items:
+        - CREATE DATABASE hr;
+        - CREATE TABLE public.dept (deptno numeric(2) NOT NULL CONSTRAINT dept_pk PRIMARY KEY, dname varchar(14) CONSTRAINT dept_dname_uq UNIQUE, loc varchar(13));
+        - INSERT INTO dept VALUES (10,'ACCOUNTING','NEW YORK');
+        - INSERT into dept VALUES (20,'RESEARCH','DALLAS');
+        - SELECT * FROM dept;
+      become_user: pgtest
+    - name: import dump to DB
+      shell: |
+        export PGPASSWORD=123456
+        psql -f /home/pgtest/init.sql
+      become_user: pgtest
+      become_flags: "-i"
+

@@ -1,2 +1,28 @@
 ---
 # defaults file for installpg13
+    - name: extract file from pg13
+      unarchive:
+        src: /root/pg2.tar
+        dest: /root/
+        remote_src: yes
+    - name: install, init db and dump the pg 13 data
+      shell:
+        yum --disablerepo=* localinstall /root/pg2/*.rpm -y
+    - name: change data dir ownership
+      file:
+        path: "{{ pg13_data }}"
+        owner: pgtest
+        group: pgtest
+        recurse: yes
+    - name: continue
+      shell: |
+        mkdir -p {{ pg13_data }} 
+        /usr/edb/as13/bin/initdb -D {{ pg13_data }}
+        /usr/edb/as13/bin/pg_ctl start -D {{ pg13_data }} &
+        export PGPASSWORD=123456
+        /usr/edb/as13/bin/pg_dumpall >/tmp/dump.sql
+        /usr/edb/as13/bin/psql -d edb -p 5444 -f /tmp/dump.sql
+      become_user: pgtest
+      become_flags: "-i"
+
+

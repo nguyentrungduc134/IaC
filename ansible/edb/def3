@@ -1,0 +1,4 @@
+---
+# defaults file for installpg13
+pg13_data: /pgdata/proactq/data/pg13
+

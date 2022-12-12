@@ -26,9 +26,14 @@
 #templatefile is a function read file (bash script) and use variable to create template
 templatefile(path, vars)
 #rendered attribute: result of template
+3
 ---
 #Modules are reusable Terraform configurations (use in many enviroments stage/prod)
 #could define variable parameters in module and input it in main.tf, also could output from module
 #local variable is defined in module and can not be inputed ( like http_port)
 ---
 #use path. reference to read module file location
+#use seperate resources instead of inline blocks allow you to add custome config latter to that resource
+#best to store module and live to seperate repos in github
+---
+#use tag to version the module code in git, change it for prod when it's ready 
