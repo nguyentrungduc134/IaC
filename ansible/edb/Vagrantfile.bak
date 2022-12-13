@@ -1,0 +1,58 @@
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  config.vm.define "postgres" do |postgres|
+     postgres.vm.synced_folder '.', '/vagrant', disabled: false
+     postgres.vm.box = "centos/7"
+     postgres.vm.hostname = "cenps"
+     postgres.vm.network "private_network", ip: "192.168.56.69"
+     postgres.vm.provision "shell", path: "lvm2.sh"
+     postgres.vm.provider "virtualbox" do |vb|
+
+      unless File.exist?("D:\\disks\\disk-4.vdi")
+       vb.customize ["createmedium",
+                     "--filename", "D:\\disks\\disk-4.vdi",
+                     "--size", "2048", "--format", "VDI"]
+
+       vb.customize ["storagectl", :id,
+                     "--name", "SATA Controller",
+                     "--add", "SATA"]
+
+       vb.customize ["storageattach", :id,
+                     "--storagectl", "SATA Controller",
+                     "--port", "1", "--device", "0",
+                     "--type", "HDD",
+                     "--medium", "D:\\disks\\disk-4.vdi"]
+                    
+      end
+      unless File.exist?("D:\\disks\\disk-5.vdi")      
+       vb.customize ["createmedium",
+                     "--filename", "D:\\disks\\disk-5.vdi",
+                     "--size", "2048", "--format", "VDI"]  
+       
+       vb.customize ["storageattach", :id,
+                     "--storagectl", "SATA Controller",
+                     "--port", "2", "--device", "0",
+                     "--type", "HDD",
+                     "--medium", "D:\\disks\\disk-5.vdi"]                     
+      end
+       vb.customize ["storageattach", :id,
+                     "--storagectl", "IDE",
+         "--port", "0", "--device", "1",
+         "--type", "dvddrive",
+         "--medium", "emptydrive"]
+
+
+       vb.customize "post-comm", ["storageattach", :id, 
+                     "--storagectl", "IDE", 
+                     "--port", "0", "--device", "1", 
+                     "--type", "dvddrive", 
+                     "--medium", "D:\\CentOS-7-x86_64-DVD-2009.iso"]    
+     end
+  end
+end
+

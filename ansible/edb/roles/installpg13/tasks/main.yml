@@ -1,0 +1,26 @@
+---
+# tasks file for installpg13
+    - name: extract file from pg13
+      unarchive:
+        src: /root/pg.tar
+        dest: /root/
+        remote_src: yes
+    - name: install, init db and dump the pg 9 data
+      shell: 
+        yum --disablerepo=* localinstall /root/*.rpm -y
+    - name: change data dir ownership
+      file:
+        path: /var/lib/edb
+        owner: pgtest
+        group: pgtest
+        recurse: yes
+    - name: continue
+      shell: |
+        /usr/edb/as13/bin/initdb -D /var/lib/edb/as13/proact
+        /usr/edb/as13/bin/pg_ctl start -D /var/lib/edb/as13/proact &
+        export PGPASSWORD=123456
+        /usr/edb/as13/bin/pg_dumpall >/tmp/dump.sql
+        /usr/edb/as13/bin/psql -d edb -p 5444 -f /tmp/dump.sql
+      become_user: pgtest
+      become_flags: "-i"
+

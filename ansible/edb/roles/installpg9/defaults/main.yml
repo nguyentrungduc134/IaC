@@ -1,0 +1,13 @@
+---
+# defaults file for installpg9
+db_install_file: /root/edb-as96-server-9.6.15.22-1-linux-x64.run
+group_name: pgtest
+user_name: pgtest
+data_dir: /pgdata/proactq/data/pg9
+install_dir: /PG/proact
+data_root: /pgdata/
+install_root: /PG/ 
+env_var: |
+
+
+

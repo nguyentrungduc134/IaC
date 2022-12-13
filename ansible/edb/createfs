@@ -62,7 +62,7 @@
       lvol:
         vg: "{{ vg_pg13 }}"
         size: 100%FREE
-        lv: "{{ lv_pg13 }}"
+        lv: " {{ lv_pg13 }}"
         shrink: no
 
     - name: format filesystem
@@ -70,17 +70,7 @@
         fstype: xfs
         dev: "{{ item }}"
       with_items:
-       - /dev/{{ vg_pg9 }}/{{ lv_pg9 }}
-       - /dev/{{ vg_pg13 }}/{{ lv_pg13 }}
-    - name: mount the filesystem pg9
-      mount:
-        src: "/dev/{{ vg_pg9 }}/{{ lv_pg9 }}"
-        path: "{{ mount_pg9 }}"
-        state: mounted
-        fstype: xfs
-    - name: mount the filesystem pg13         
-      mount:
-        src: "/dev/{{ vg_pg13 }}/{{ lv_pg13 }}"
-        path: "{{ mount_pg13 }}"
-        state: mounted
-        fstype: xfs
+       - /dev/"{{ vg_pg9 }}"/"{{ lv_pg9 }}"
+       - /dev/"{{ vg_pg13 }}"/"{{ lv_pg13 }}"
+
+
