@@ -58,7 +58,11 @@ b
 #ansible config show in --version and can be inited
 https://docs.ansible.com/ansible/latest/reference_appendices/config.html
 #some typing error like space in {{ }} variable could lead to weird error
-
+4,
+---
+#ash: script to auto add ssh key access for ansible
+ssh-keygen -f ~/.ssh/known_hosts -R 192.168.56.69
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.69
 
 
 
