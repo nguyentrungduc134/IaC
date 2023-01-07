@@ -65,7 +65,8 @@ ssh-keygen -f ~/.ssh/known_hosts -R 192.168.56.69
 sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.69
 #drupal is a free and open-source content-management framework that can be tailored and customized to simple websites or complex web applications
 ---
-#It is used for server-side programming, and primarily deployed for non-blocking, event-driven servers, such as traditional web sites and back-end API services, but was originally designed with real-time, push-based architectures in mind.
+#nodejs It is used for server-side programming, and primarily deployed for non-blocking, event-driven servers, such as traditional web sites and back-end API services, but was originally designed with real-time, push-based architectures in mind
+#.
 
 
 
