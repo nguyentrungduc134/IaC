@@ -72,10 +72,10 @@ in the base installation
 #Ansible makes things a little more robust. Even though the following is slightly more verbose, it
 performs the same actions in a more structured way, which is simpler to understand, and works
 with variables other nifty Ansible features we’ll discuss late
-
-
-
-
+#
+yum installs Node.js (along with all the required packages for npm, Node’s package manager) if
+it’s not present, and allows the EPEL repo to be searched via the enablerepo parameter (you
+could also explicitly disable a repository using disablerepo).
 
 
 
