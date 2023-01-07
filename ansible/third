@@ -67,12 +67,11 @@ sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.69
 ---
 #nodejs It is used for server-side programming, and primarily deployed for non-blocking, event-driven servers, such as traditional web sites and back-end API services, but was originally designed with real-time, push-based architectures in mind
 #Adding extra package repositories (yum or apt) is one thing many admins will do before any other
-
 work on a server to ensure that certain packages are available, or are at a later version than the ones
-
 in the base installation
-
-
+#Ansible makes things a little more robust. Even though the following is slightly more verbose, it
+performs the same actions in a more structured way, which is simpler to understand, and works
+with variables other nifty Ansible features we’ll discuss late
 
 
 
