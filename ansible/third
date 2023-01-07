@@ -66,10 +66,11 @@ sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.69
 #drupal is a free and open-source content-management framework that can be tailored and customized to simple websites or complex web applications
 ---
 #nodejs It is used for server-side programming, and primarily deployed for non-blocking, event-driven servers, such as traditional web sites and back-end API services, but was originally designed with real-time, push-based architectures in mind
-#.
+#Adding extra package repositories (yum or apt) is one thing many admins will do before any other
 
+work on a server to ensure that certain packages are available, or are at a later version than the ones
 
-
+in the base installation
 
 
 
