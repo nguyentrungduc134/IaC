@@ -78,7 +78,15 @@ with variables other nifty Ansible features we’ll discuss late
 yum installs Node.js (along with all the required packages for npm, Node’s package manager) if
 it’s not present, and allows the EPEL repo to be searched via the enablerepo parameter (you
 could also explicitly disable a repository using disablerepo).
-#dependecies lIke phố máy require latter versions
+#dependecies like php may require latter versions
+#error in the ansible is the same as bash
+---
+#Apache Solr is a fast and scalable search server optimized for full-text search, word
+highlighting, faceted search, fast indexing, and more. It’s a very popular search
+server, and it’s pretty easy to install and configure using Ansible
+#galaxy-role-servers: A couple very short playbooks that demonstrate how easy it is to get new servers running leveraging the power of community Ansible Galaxy roles.
+#A Memcached server provides a caching layer that can be used to store and retrieve
+frequently-accessed objects in lieu of slower database storage.
 
 
 
