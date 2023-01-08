@@ -77,8 +77,7 @@ with variables other nifty Ansible features we’ll discuss late
 yum installs Node.js (along with all the required packages for npm, Node’s package manager) if
 it’s not present, and allows the EPEL repo to be searched via the enablerepo parameter (you
 could also explicitly disable a repository using disablerepo).
-#
-
+#dependecies lIke phố máy require latter versions
 
 
 
