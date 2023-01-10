@@ -111,3 +111,24 @@ where NAME is an identifier you can use throughout the Terraform code to refer t
 this module (e.g., web-service), SOURCE is the path where the module code can
 be found (e.g., modules/services/webserver-cluster), and CONFIG consists of one
 or more arguments that are specific to that module
+#In Terraform, modules can have input parameters, too. To define them, you use a
+mechanism you’re already familiar with: input variables. Open up
+modules/services/webserver-cluster/variables.tf and add three new input
+variables
+#Local values allow you to assign a name to any Terraform expression, and to use
+that name throughout the module. These names are only visible within the
+module, so they will have no impact on other modules, and you can’t overridethese values from outside of the module.
+5,
+---
+#In Terraform, a module can also return values. Again, you do this using a
+mechanism you already know: output variables. You can add the ASG name as
+an output variable in /modules/services/webserver-cluster/outputs.tf as follows:
+#prt: use module to build web-clusters 
+#you can use an expression known as a path reference, which
+is of the form path.<TYPE>. Terraform supports the following types of path
+references:
+path.module
+Returns the filesystem path of the module where the expression is defined.
+path.root
+Returns the filesystem path of the root module.
+path.cwd
