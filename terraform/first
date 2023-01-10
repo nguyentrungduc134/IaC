@@ -17,6 +17,11 @@
 #terraform save state and diff to apply change
 #should not save state in version control but best in cloud storage
 #terraform use workspaces to store multiple seperate states
+Terraform workspaces allow you to store your Terraform state in multiple,
+separate, named workspaces. Terraform starts with a single workspace called
+“default,” and if you never explicitly specify a workspace, the default workspace
+is the one you’ll use the entire time. To create a new workspace or switch
+between workspaces, you use the terraform workspace commands.
 ---
 #shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
 #could seperate .tf file because terraform just read .tf file
@@ -37,3 +42,72 @@ templatefile(path, vars)
 #best to store module and live to seperate repos in github
 ---
 #use tag to version the module code in git, change it for prod when it's ready 
+#prt: c2: install terraform and setup aws
+#prt: c2: provision web server cluster
+---
+#very time you run Terraform, it records information about what infrastructure it
+created in a Terraform state file. By default, when you run Terraform in the
+folder /foo/bar, Terraform creates the file /foo/bar/terraform.tfstate. This file
+contains a custom JSON format that records a mapping from the Terraform
+resources in your configuration files to the representation of those resources in
+the real world. 
+#prt: provision s3 file layout with dynamo db 03-terraform-state/file-layout-example
+#prt: The only solution available as of May 2019 is to take advantage of partial
+configuration, in which you omit certain parameters from the backend
+configuration in your Terraform code and instead pass those in via -backendconfig command-line arguments when calling terraform init.
+---
+#When you first
+start using Terraform, you might be tempted to define all of your infrastructure
+in a single Terraform file or a single set of Terraform files in one folder. The
+problem with this approach is that all of your Terraform state is now stored in a
+single file, too, and a mistake anywhere could break everything.
+#prt: c3 use seperate workspaces
+#prt: c3 provision web server cluster with seperate layout
+4,
+---
+#terraform_remote_state. You can use this data source to fetch the
+Terraform state file stored by another set of Terraform configurations in a
+completely read-only manner.
+#One option for handling secrets is to use a Terraform data source to read the
+secrets from a secret store. For example, you can store secrets, such as database
+passwords, in AWS Secrets Manager, which is a managed service AWS offers
+specifically for storing sensitive data. You could use the AWS Secrets Manager
+UI to store the secret and then read the secret back out in your Terraform code
+using the aws_secretsmanager_secret_version data source:
+#The second option for handling secrets is to manage them completely outside of
+Terraform (e.g., in a password manager such as 1Password, LastPass, or OS X
+Keychain) and to pass the secret into Terraform via an environment variable. To
+do that, declare a variable called db_password in stage/datastores/mysql/variables.tf:
+---
+#All of the database’s output variables are stored in the state file and you can read
+them from the terraform_remote_state data source using an attribute
+reference of the form:
+data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>i
+#Terraform includes a number of built-in functions that you can execute using an
+expression of the form:
+function_name(...)
+#When the User Data script was embedded in the Terraform code,
+you used Terraform references and interpolation to fill in these values. This does
+not work with the file function. However, it does work if you use a
+template_file data source.
+---
+#The final step is to update the user_data parameter of the
+aws_launch_configuration resource to point to the rendered output attribute
+of the template_file data source:
+#With Terraform, you can put your code inside of a Terraform module and reuse
+that module in multiple places throughout your code. Instead of having the same
+code copied and pasted in the staging and production environments, you’ll be
+able to have both environments reuse code from the same module
+#, create a new top-level
+folder called modules and move all of the files from stage/services/webservercluster to modules/services/webserver-cluster.
+---
+#You can now make use of this module in the staging environment. Here’s the
+syntax for using a module:
+module "<NAME>" {
+source = "<SOURCE>"
+[CONFIG ...]
+}
+where NAME is an identifier you can use throughout the Terraform code to refer to
+this module (e.g., web-service), SOURCE is the path where the module code can
+be found (e.g., modules/services/webserver-cluster), and CONFIG consists of one
+or more arguments that are specific to that module
