@@ -132,3 +132,66 @@ Returns the filesystem path of the module where the expression is defined.
 path.root
 Returns the filesystem path of the root module.
 path.cwd
+---
+#The easiest way to create a
+versioned module is to put the code for the module in a separate Git repository
+and to set the source parameter to that repository’s URL. That means your
+Terraform code will be spread out across (at least) two repositories:
+#prt: c5 use count parameter to provide 3 IAM users live/global/iam/main.tf:
+#every Terraform resource
+has a meta-parameter you can use called count. count is Terraform’s oldest,
+simplest, and most limited iteration construct: all it does is define how many
+copies of the resource to create
+---
+#prt: user count index and seperate variables for naming live/global/iam/variables.tf
+#count cons: inline blocks and delete
+#The for_each expression allows you to loop over lists, sets, and maps to create
+either (a) multiple copies of an entire resource, or (b) multiple copies of an inline
+block within a resource.
+---
+#prt: user foreach expression to create multi users and delete
+#prt: c5 Let’s now turn our attention to another advantage of for_each: it’s ability to
+create multiple inline blocks within a resource. For example, you can use
+for_each to dynamically generate tag inline blocks for the ASG in the
+webserver-cluster module.
+#prt: Terraform offers similar functionality in the form of a for expression (not to be
+confused with the for_each expression you saw in the previous section). The
+basic syntax of a for expression is:
+[for <ITEM> in <LIST> : <OUTPUT>] 
+6,
+---
+#Terraform’s for expression also allows you to loop over a map using the
+following syntax:
+[for <KEY>, <VALUE> in <MAP> : <OUTPUT>]
+#String directives allow you to use control statements (e.g., for-loops and ifstatements) within strings using a syntax similar to string interpolations, but
+instead of a dollar sign and curly braces (${…}), you use a percent sign and curly
+braces (%{…}).
+#prt: c5 conditionals using count and contidtional expression
+---
+#prt: The goal is to attach one of these IAM policies to neo, based on the value of a
+new input variable called give_neo_cloudwatch_full_
+#prt: The question is, how can you allow the user of the webserver-cluster module
+to pick from one of these User Data scripts?
+#prt: Conditionals with for_each and for Expressions
+---
+#prt: %{ if <CONDITION> }<TRUEVAL>%{ endif }
+where CONDITION is any expression that evaluates to a boolean and TRUEVAL is
+the expression to render if CONDITION evaluates to true. You can optionally
+include an else clause as follows:
+%{ if <CONDITION> }<TRUEVAL>%{ else }<FALSEVAL>%{ endif }
+#prt: Zero-Downtime Deployment
+#Terraform requires that it can compute count and for_each during the plan
+phase, before any resources are created or modified. This means that count and
+for_each can reference hardcoded values, variables, data sources, and even lists
+of resources (so long as the length of the list can be determined during plan), but
+not computed resource outputs.
+---
+#Unfortunately, as of Terraform 0.12.6, using count or for_each on module is
+not supported. According to the Terraform 0.12 release notes, this is something
+HashiCorp plans to add in the future, so depending on when you’re reading this
+book, it might already be available. Check the Terraform CHANGELOG to find
+out.
+#Using create_before_destroy with an ASG is a great technique for zerodowntime deployment, but there is one limitation: it doesn’t work with auto
+scaling policies. Or, to be more accurate, it resets your ASG size back to its
+min_size after each deployment, which can be a problem if you had used autoscaling policies to increase the number of running servers.
+#prt: above issue workaround
