@@ -195,3 +195,10 @@ out.
 scaling policies. Or, to be more accurate, it resets your ASG size back to its
 min_size after each deployment, which can be a problem if you had used autoscaling policies to increase the number of running servers.
 #prt: above issue workaround
+---
+#If you have existing infrastructure, use the import command
+# common programming practice is refactoring, in which you restructure the
+internal details of an existing piece of code without changing its external
+behavior.
+#chage state: terraform state mv command, which has the following syntax:
+terraform state mv <ORIGINAL_REFERENCE> <NEW_REFERENCE>
