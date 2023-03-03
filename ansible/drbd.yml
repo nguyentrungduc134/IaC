@@ -1,0 +1,329 @@
+---
+- hosts: drbd
+  become: yes
+  become_user: root
+  become_method: su
+  tasks:
+    - name: add to hostfile
+      lineinfile:
+         path: /etc/hosts
+         line: "{{ item }}"
+         state: present
+         backup: yes
+      with_items:
+        - "{{ hostvars.db01.ansible_eth1.ipv4.address }} {{ hostvars.db01.ansible_hostname }}"
+        - "{{ hostvars.db02.ansible_eth1.ipv4.address }} {{ hostvars.db02.ansible_hostname }}"
+        - "{{ hostvars.quorum.ansible_eth1.ipv4.address }} {{ hostvars.quorum.ansible_hostname }}"
+
+    - name: disable selinux
+      selinux:
+        state: disabled
+
+
+    - name: backup repos
+      shell:
+        mv `ls /etc/yum.repos.d/*.repo -I local.repo` /tmp/
+      ignore_errors: yes
+      args:
+         creates: /etc/yum.repos.d/local.repo
+    - name: create file local repos
+      file:
+        path: /etc/yum.repos.d/local.repo
+        state: touch
+
+    - name: add new local repos
+      lineinfile:
+         path: /etc/yum.repos.d/local.repo
+         line: "{{ item }}"
+         state: present
+         backup: yes
+      with_items:
+        - "[CentOS79] "
+        - "name=CentOS x86_64 "
+        - "baseurl=file:///media "
+        - "gpgcheck=0 "
+        - "enabled=1  "
+
+
+    - name: Mount volume
+      mount:
+        src: /dev/cdrom
+        path: /media
+        state: mounted
+        fstype: iso9660
+    - name: Install the 'Development tools' package group
+      yum:
+        name: "@Development tools"
+        state: present
+    - name: Install lvm2
+      yum:
+        name: lvm2
+        state: present
+
+    - name: check if sdb1 exist
+      stat:
+        path: /dev/sdb1
+      register: filesdb
+
+    - name: Create a new ext4 primary partition
+      parted:
+        device: /dev/sdb
+        number: 1
+        part_end: 1GB
+        state: present
+      when: filesdb.stat.exists is defined and filesdb.stat.exists == False
+    - name: format
+      filesystem:
+        fstype: ext4
+        dev: /dev/sdb1
+      when: filesdb.stat.exists is defined and filesdb.stat.exists == False
+    - name: task for creating volume group
+      lvg:
+        vg: vg00
+        pvs: /dev/sdb1
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+    - name: task for creating volume group for target
+      lvg:
+        vg: vg_iscsi
+        pvs: /dev/sdb1
+      when: ansible_hostname == "quorum"
+
+    - name: create lvm for target
+      lvol:
+        vg: vg_iscsi
+        size: 100%FREE
+        lv: lv_iscsi
+        shrink: no
+      when: ansible_hostname == "quorum"
+
+    - name: create lvm
+      lvol:
+        vg: vg00
+        size: 100%FREE
+        lv: drbd-r0
+        shrink: no
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+    - name: install target
+      yum:
+        name: targetcli
+        state: present
+      when: ansible_hostname == "quorum"
+
+    - name: json config change
+      shell: |
+       targetctl restore /root/scripts/target/saveconfig.json
+       targetctl save /etc/target/saveconfig.json
+      when: ansible_hostname == "quorum"
+      args:
+        creates: /etc/target/saveconfig.json
+    - name: start target
+      service:
+        name: target
+        state: started
+        enabled: yes
+      when: ansible_hostname == "quorum"
+
+    - name: install pcs
+      yum:
+        name:
+          - pacemaker
+          - pcs
+          - resource-agents
+          - sbd
+          - fence-agents-sbd
+          - fence-agents-kdump
+          - iscsi-initiator-utils
+    - name: enable pcs
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items:
+          - pcsd
+          - corosync
+          - pacemaker
+          - iscsid
+      ignore_errors: True
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+
+    - name: initialize cluster
+      shell: |
+           echo -e "123\n123" | passwd hacluster
+           echo -e "123\n"|pcs cluster auth db01 db02 -u hacluster
+           pcs cluster setup --name mycluster db01 db02
+           pcs cluster start --all
+           pcs cluster enable --all
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+      args:
+        creates: /etc/corosync/corosync.conf
+
+
+    - name: install sbd
+
+      shell: |
+          echo "InitiatorName=iqn.2022-06.gdc.managed.service:{{ ansible_hostname }}">/etc/iscsi/initiatorname.iscsi
+          systemctl restart iscsid
+          systemctl enable iscsid
+          iscsiadm -m discovery -t st -p 192.168.56.83
+          iscsiadm -m node -T iqn.2022-06.gdc.managed.service:disk1 -p 192.168.56.83 -l
+          iscsiadm -m node -T iqn.2022-06.gdc.managed.service:disk1 -p 192.168.56.83 -u
+          iscsiadm -m node -p 192.168.56.83 --op=update --name=node.startup --value=automatic
+          iscsiadm -m node -T iqn.2022-06.gdc.managed.service:disk1 -p 192.168.56.83 -l
+          modprobe -v softdog
+          echo softdog > /etc/modules-load.d/watchdog.conf
+          systemctl restart systemd-modules-load
+          sleep 1m
+          scsi_id=`ls -al /dev/disk/by-id/|grep scsi|awk '{print $9}'`
+          sbd -d /dev/disk/by-id/$scsi_id -1 5 -4 10 create
+          sbd -d "/dev/disk/by-id/$scsi_id" dump
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+      args:
+        creates: /etc/modules-load.d/watchdog.conf
+    - name: pacemaker sbd config
+      shell: |
+         pcs cluster stop --all
+         sleep 1
+         pcs stonith sbd enable
+         sleep 1
+         pcs cluster start --all
+         sleep 1
+         pcs cluster cib /root/mycluster
+         pcs -f /root/mycluster stonith create kdump fence_kdump pcmk_host_check=static-list pcmk_host_list="db01, db02" pcmk_monitor_action=metadata pcmk_off_retries=1 pcmk_reboot_action=off pcmk_status_action=metadata pcmk_off_timeout=120 timeout=120
+         pcs -f /root/mycluster stonith level add 1 db01 kdump
+         pcs -f /root/mycluster stonith level add 1 db02 kdump
+         pcs -f /root/mycluster stonith create mysbd01 fence_sbd pcmk_host_list="db01, db02" devices="/dev/disk/by-id/scsi-3600140579e9ac27ea2a4290a9c2cdc94" pcmk_delay_base=5 pcmk_delay_max=15 power_timeout=25
+         pcs -f /root/mycluster stonith level add 2 db01 mysbd01
+         pcs -f /root/mycluster stonith level add 2 db02 mysbd01
+         pcs -f /root/mycluster stonith enable --watchdog=/dev/watchdog --device=/dev/disk/by-id/scsi-3600140579e9ac27ea2a4290a9c2cdc94 mysbd01
+      when: ansible_hostname == "db01"
+      args:
+        creates: /root/mycluster
+    - name: onstall drbd
+      yum:
+         name:
+           - /root/scripts/packages/drbd/drbd90-utils-9.20.2-1.el7.elrepo.x86_64.rpm
+           - /root/scripts/packages/drbd/kmod-drbd90-9.1.6-1.el7_9.elrepo.x86_64.rpm
+         state: present
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+
+    - name: modprobe
+      shell: |
+         modprobe drbd
+         echo drbd > /etc/modules-load.d/drbd.conf
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+      args:
+        creates: /etc/modules-load.d/drbd.conf
+    - name: create file drbd config
+      file:
+        path: /etc/drbd.d/drbd_r0.res
+        state: touch
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+
+    - name: config drbd
+      shell: |
+         echo "resource r0 {                                   ">     /etc/drbd.d/drbd_r0.res
+         echo "	protocol C;                                   ">>     /etc/drbd.d/drbd_r0.res
+         echo "	startup {                                     ">>     /etc/drbd.d/drbd_r0.res
+         echo "		degr-wfc-timeout 60;                      ">>     /etc/drbd.d/drbd_r0.res
+         echo "		outdated-wfc-timeout 30;                  ">>     /etc/drbd.d/drbd_r0.res
+         echo "		wfc-timeout 20;                           ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "	disk {                                        ">>     /etc/drbd.d/drbd_r0.res
+         echo "		on-io-error detach;                       ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "	net {                                         ">>     /etc/drbd.d/drbd_r0.res
+         echo "		cram-hmac-alg sha1;                       ">>     /etc/drbd.d/drbd_r0.res
+         echo "		shared-secret \"Daveisc00l123313\";       ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "	volume 0 {                                    ">>     /etc/drbd.d/drbd_r0.res
+         echo "			device /dev/drbd0;                    ">>     /etc/drbd.d/drbd_r0.res
+         echo "			disk /dev/mapper/vg00-drbd--r0;       ">>     /etc/drbd.d/drbd_r0.res
+         echo "			meta-disk internal;                   ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "	on db01 {                               ">>     /etc/drbd.d/drbd_r0.res
+         echo "		address 192.168.56.81:7789;              	  ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "	on db02 {                               ">>     /etc/drbd.d/drbd_r0.res
+         echo "	        address 192.168.56.82:7789;              	  ">>     /etc/drbd.d/drbd_r0.res
+         echo "	}                                             ">>     /etc/drbd.d/drbd_r0.res
+         echo "}                                               ">>     /etc/drbd.d/drbd_r0.res
+         drbdadm create-md r0 --force
+         drbdadm up r0
+         drbdadm primary r0 --force
+         drbdadm -- --overwrite-data-of-peer primary all
+         drbdadm outdate r0
+         mkfs.ext4 /dev/drbd0
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+    - name: add resource drbd
+      shell: |
+         pcs -f /root/mycluster resource create r0 ocf:linbit:drbd drbd_resource=r0 op monitor interval=10s
+         pcs -f /root/mycluster resource master r0-clone r0 master-max=1 master-node-max=1 clone-max=2 clone-node-max=1 notify=true
+         pcs -f /root/mycluster resource create drbd-fs-pgdata Filesystem device="/dev/drbd0" directory="/pgdata" fstype="ext4"
+         pcs -f /root/mycluster constraint colocation add drbd-fs-pgdata with r0-clone INFINITY with-rsc-role=Master
+         pcs -f /root/mycluster resource create vip1 ocf:heartbeat:IPaddr2 ip=192.168.56.100 cidr_netmask=24 op monitor interval=10s
+         pcs -f /root/mycluster constraint colocation add vip1 with drbd-fs-pgdata INFINITY
+         pcs -f /root/mycluster constraint order drbd-fs-pgdata then vip1
+         pcs -f /root/mycluster resource show
+         pcs -f /root/mycluster constraint
+         pcs cluster cib-push /root/mycluster --config
+      when: ansible_hostname == "db01"
+
+    - name: install postgres
+      yum:
+         name:
+           - /root/scripts/packages/postgres14/postgresql14-server-14.3-1PGDG.rhel7.x86_64.rpm
+           - /root/scripts/packages/postgres14/postgresql14-contrib-14.3-1PGDG.rhel7.x86_64.rpm
+           - /root/scripts/packages/postgres14/postgresql14-libs-14.3-1PGDG.rhel7.x86_64.rpm
+           - /root/scripts/packages/postgres14/postgresql14-14.3-1PGDG.rhel7.x86_64.rpm
+         state: present
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+      tags:
+           - postgres
+
+    - name: "Find out if PostgreSQL is initialized"
+      stat:
+        path: /var/lib/pgsql/14/data/postgresql.conf
+      register: postgres_data
+      tags:
+           - postgres
+    - name: "Initialize PostgreSQL"
+      shell: |
+          /usr/pgsql-14/bin/postgresql-14-setup initdb
+      when:
+           - postgres_data.stat.exists == False
+           - ansible_hostname == "db01" or ansible_hostname == "db02"
+      tags:
+           - postgres
+    - name: create pgdata folder
+      file:
+         path: /pgdata
+         owner: postgres
+         group: postgres
+         state: directory
+         mode: 0770
+         recurse: yes
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+
+    - name: change configuration of postgres
+      shell: |
+         rsync -av /var/lib/pgsql/14/data /pgdata/
+         sed -i "s/#data_directory = 'ConfigDir'/data_directory = '\/pgdata\/data'/g" /pgdata/data/postgresql.conf
+         sed -i "s/Environment=PGDATA=\/var\/lib\/pgsql\/14\/data/Environment=PGDATA=\/pgdata\/data/g" /lib/systemd/system/postgresql-14.service
+         systemctl daemon-reload
+         systemctl start postgresql-14.service
+         systemctl stop postgresql-14.service
+      tags:
+           - postgres
+      when: ansible_hostname == "db01" or ansible_hostname == "db02"
+    - name: add to drbd
+      shell: |
+         pcs -f /root/mycluster resource create pgsql ocf:heartbeat:pgsql pgctl=/usr/pgsql-14/bin/pg_ctl psql=/usr/pgsql-14/bin/psql pgdata=/pgdata/data op monitor timeout=30s interval=30s
+         pcs -f /root/mycluster constraint colocation add pgsql with vip1 INFINITY
+         pcs -f /root/mycluster constraint order vip1 then pgsql
+         pcs -f /root/mycluster constraint order promote r0-clone then start drbd-fs-pgdata
+         pcs resource cleanup
+         pcs cluster cib-push /root/mycluster --config
+      when: ansible_hostname == "db01"
+      tags:
+           - postgres
+
