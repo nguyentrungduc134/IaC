@@ -45,10 +45,14 @@ ansible webservers -m service -a "name=httpd state=restarted"
 2a
 #idempotence: check before running, reusable
 #with_items: variable list
+1.1
 #state: state of service
+1.1
 ---
 b
 # playbook: --limit limit host, --list-hosts
+ansible all -m [module] -a "[module options]" --limit "host1,host2"
+ansible all -m [module] -a "[module options]" --limit 'group1'
 #remote-user(-u) --become: sudo run, --become-user: run sudo with user
 #--inventory(-i) specify intentory, -e --extra-vars
 ---
