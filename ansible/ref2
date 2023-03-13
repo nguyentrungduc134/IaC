@@ -59,6 +59,10 @@ ansible all -m [module] -a "[module options]" --limit 'group1'
 c
 #App .js and npm read json to install dependencies
 #register: used to decide latter whether to run
+    - name: check if sdb1 exist
+      stat:
+        path: /dev/sdb1
+      register: filesdb
 #changed_when: specify the condition of change to ansible
 ---
 3a
