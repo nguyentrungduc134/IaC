@@ -68,6 +68,13 @@ c
 3a
 LAMP
 #when: specify the condition to do something
+    - name: Create a new ext4 primary partition
+      parted:
+        device: /dev/sdb
+        number: 1
+        part_end: 1GB
+        state: present
+      when: filesdb.stat.exists is defined and filesdb.stat.exists == False
 #pre_task, post_task, seperate with main task
 #handler: at the end, trigger by  notify of changed from a task
 ---
@@ -78,6 +85,12 @@ b
 ---
 c
 #ignore_errors: ignore known error
+    - name: backup repos
+      shell:
+        mv `ls /etc/yum.repos.d/*.repo -I local.repo` /tmp/
+      ignore_errors: yes
+      args:
+         creates: /etc/yum.repos.d/local.repo
 #delegate_to: delegate task to other hosts
 #local_action: task run at localhost
 4a
