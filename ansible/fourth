@@ -162,3 +162,17 @@ changes!).
 Ruby-like DSL to ensure your server configuration matches your expectations. In a
 sense, it’s another way of building well-tested infrastructure.
 #prt: elk step ensure dir exist in elk featbeat is error when run with vagrant user (?)
+---
+#setup vagrant wsl the same with windows host (or only wsl) and set some env
+https://developer.hashicorp.com/vagrant/docs/other/wsl
+#run ansible on wsl, on vm, or on a seperate ansible host
+https://github.com/JeffReeves/WSL-Ansible-Vagrant-VirtualBox/blob/main/Vagrantfile
+#fix some ssh error using a plugin
+https://blog.thenets.org/how-to-run-vagrant-on-wsl-2/
+https://github.com/Karandash8/virtualbox_WSL2
+---
+#docker minimize langauge pack for centos
+https://github.com/CentOS/sig-cloud-instance-images/issues/71
+#vagrant box add and remove
+#vagrant vbguest manual install
+https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-plugin-install-vagrantvbguest-on-bpdevopstoolkit-in-offline-environment
