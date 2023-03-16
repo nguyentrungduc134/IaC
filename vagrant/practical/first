@@ -13,3 +13,12 @@ https://github.com/CentOS/sig-cloud-instance-images/issues/71
 #vagrant box add and remove
 #vagrant vbguest manual install
 https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-plugin-install-vagrantvbguest-on-bpdevopstoolkit-in-offline-environment
+---
+#prt: vboxmanage command
+vboxmanage list vms
+vboxmanage list runningvms
+vboxmanage startvm <name or UUID>.
+https://blog.scottlowe.org/2016/11/10/intro-to-vbox-cli/
+#prt: start with separete or headless
+https://forums.virtualbox.org/viewtopic.php?f=6&t=80246
+
