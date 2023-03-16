@@ -176,3 +176,17 @@ https://github.com/CentOS/sig-cloud-instance-images/issues/71
 #vagrant box add and remove
 #vagrant vbguest manual install
 https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-plugin-install-vagrantvbguest-on-bpdevopstoolkit-in-offline-environment
+---
+##vagrant package command
+https://developer.hashicorp.com/vagrant/docs/cli/package
+vagrant package --base=elk_logs_1678714520744_81834 --ouitput="D:\VM\log.box"
+#prt elk: access root script and provision machine through vagrant root.sh
+sudo su -
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+systemctl restart sshd.service
+echo -e "123456\n123456" | passwd root
+#prt: elk add ssh keys and run ansible playbook on destined machine
+ssh-keygen -R 192.168.56.90
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.90
+ansible-playbook -b -i provisioning/elk/inventory provisioning/elk/main.yml -uroot
