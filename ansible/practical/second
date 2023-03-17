@@ -1,0 +1,46 @@
+7,
+--
+#prt: Testing on multiple OSes with Docker
+#Serverspec167 is a tool to help automate server tests using RSpec tests, which use a
+Ruby-like DSL to ensure your server configuration matches your expectations. In a
+sense, it’s another way of building well-tested infrastructure.
+#prt: elk step ensure dir exist in elk featbeat is error when run with vagrant user (?)
+---
+#setup vagrant wsl the same with windows host (or only wsl) and set some env
+https://developer.hashicorp.com/vagrant/docs/other/wsl
+#run ansible on wsl, on vm, or on a seperate ansible host
+https://github.com/JeffReeves/WSL-Ansible-Vagrant-VirtualBox/blob/main/Vagrantfile
+#fix some ssh error using a plugin
+https://blog.thenets.org/how-to-run-vagrant-on-wsl-2/
+https://github.com/Karandash8/virtualbox_WSL2
+---
+#docker minimize langauge pack for centos
+https://github.com/CentOS/sig-cloud-instance-images/issues/71
+#vagrant box add and remove
+#vagrant vbguest manual install
+https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-plugin-install-vagrantvbguest-on-bpdevopstoolkit-in-offline-environment
+---
+##vagrant package command
+https://developer.hashicorp.com/vagrant/docs/cli/package
+vagrant package --base=elk_logs_1678714520744_81834 --ouitput="D:\VM\log.box"
+#prt elk: access root script and provision machine through vagrant root.sh
+sudo su -
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+systemctl restart sshd.service
+echo -e "123456\n123456" | passwd root
+#prt: elk add ssh keys and run ansible playbook on destined machine
+ssh-keygen -R 192.168.56.90
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.90
+ansible-playbook -b -i provisioning/elk/inventory provisioning/elk/main.yml -uroot
+---
+8,
+#prt elk: trigger run after up
+    web.trigger.after :up do |trigger|
+      trigger.info = "Provision web server"
+      trigger.run = {path: "web.sh"}
+#prt jenkins: preparation and up
+*disable sync
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+*update error: ssh to machine and update: apt-get update
+
