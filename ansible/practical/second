@@ -17,6 +17,7 @@ https://github.com/Karandash8/virtualbox_WSL2
 #docker minimize langauge pack for centos
 https://github.com/CentOS/sig-cloud-instance-images/issues/71
 #vagrant box add and remove
+also option vagrant box list
 #vagrant vbguest manual install
 https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-plugin-install-vagrantvbguest-on-bpdevopstoolkit-in-offline-environment
 ---
