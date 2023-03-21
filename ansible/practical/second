@@ -43,4 +43,23 @@ ansible-playbook -b -i provisioning/elk/inventory provisioning/elk/main.yml -uro
 *disable sync
   config.vm.synced_folder '.', '/vagrant', disabled: true
 *update error: ssh to machine and update: apt-get update
+#prt:deployment: install acl to make chmod work
+---
+#prt: deployment dependency issues author can not resolve
+https://github.com/geerlingguy/ansible-for-devops/issues/429
+#prt: docker-flask: root.sn run at machine and docker.sh run at host
+ssh-keygen -R 192.168.56.39
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.39
+scp -r provisioning/ root@192.168.56.39:/vagrant/
+ansible-playbook provisioning/main.yml -uroot --limit 192.168.56.39
+*docker.sh:
+ssh-keygen -R 192.168.56.39
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.39
+scp -r provisioning/ root@192.168.56.39:/vagrant/
+ansible-playbook provisioning/main.yml -uroot --limit 192.168.56.39
+[ansible@DESKTOP-7A8ELQH docker-flask]$ cat docker.sh
+ssh-keygen -R 192.168.56.39
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.39
+scp -r provisioning/ root@192.168.56.39:/vagrant/
+ansible-playbook provisioning/main.yml -uroot --limit 192.168.56.39
 

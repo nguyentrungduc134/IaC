@@ -151,6 +151,7 @@ server, and it’s pretty easy to install and configure using Ansible
 frequently-accessed objects in lieu of slower database storage.
 5,
 #prt: provision lamp stack by vagrant
+vagrant up: update could be fail just rerun
 #prt: provision lamp stack on aws
 #prt: provision elk stack
 ---
