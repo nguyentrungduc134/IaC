@@ -157,6 +157,7 @@ vagrant up: update could be fail just rerun
 ---
 #prt: provision logstash forwarder for nginx
 #prt:provision gluster
+work ok, gluster shared normal
 #prt: provision docker container
 ---
 #prt: deployment rail and update version
