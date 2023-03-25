@@ -60,3 +60,4 @@ scp -r provisioning/ root@192.168.56.39:/vagrant/
 ansible-playbook provisioning/main.yml -uroot --limit 192.168.56.39
 #prt: drupal change version of php and drupal, run finish but apache not poin to drupal dir
 https://github.com/geerlingguy/ansible-for-devops/issues/524https://github.com/geerlingguy/ansible-for-devops/issues/524
+---
