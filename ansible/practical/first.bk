@@ -1,0 +1,164 @@
+1a
+#lineinfile check to see if there is this line, can be used with regex
+#chdir, create in command, shell module chdir: run at this dir, create: not run if this file exists
+#include can use include other playbooks
+---
+b
+#inventory file /etc/ansible/hosts
+include host group, single host must put above group
+#need to have ssh key access first to run any simple command
+#basic playbook
+--- YAML start, host:all host to run, tasks: task to run, name: task, yum: module
+
+c
+#inventory multi group [multi:children] [multi:vars]
+#default run parallel, limit using fork -f
+#run multi host, all or limit
+---
+2a
+#idempotence: check before running, reusable
+#with_items: variable list
+#state: state of service
+---
+b
+# playbook: --limit limit host, --list-hosts
+#remote-user(-u) --become: sudo run, --become-user: run sudo with user
+#--inventory(-i) specify intentory, -e --extra-vars
+---
+c
+#App .js and npm read json to install dependencies
+#register: used to decide latter whether to run
+#changed_when: specify the condition of change to ansible
+---
+3a
+LAMP
+#when: specify the condition to do something
+#pre_task, post_task, seperate with main task
+#handler: at the end, trigger by  notify of changed from a task
+---
+b
+#file module can create file and link
+#Jinja2 template can use variable in it to provide apache config
+#failed_when: specify condition of fail to ansible
+---
+c
+#ignore_errors: ignore known error
+#delegate_to: delegate task to other hosts
+#local_action: task run at localhost
+4a
+#ansible-galaxy init role name to init tree of the role
+#role help easy to see run  process, copy codes with same part to the role and replace
+#default dir have default var, easily be replaced in the main playbook, var dir have higher precedence
+b
+#ansible also have cloud module to use cloud API (aws, digitalacean)
+#dynamic inventory using result of python script to get list of servers -i file.py
+#use dynamic inventory to provision PaaS (like apache Solr)
+---
+#using serial run (fork) to gurantee no down time when deploying, can be number of percentage
+#ansible config show in --version and can be inited
+https://docs.ansible.com/ansible/latest/reference_appendices/config.html
+#some typing error like space in {{ }} variable could lead to weird error
+4,
+---
+#ash: script to auto add ssh key access for ansible
+ssh-keygen -f ~/.ssh/known_hosts -R 192.168.56.69
+sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.69
+#first-ansible-playbook: test chrony by dnf and service module, all host in vagrant provision
+#drupal is a free and open-source content-management framework that can be tailored and customized to simple websites or complex web applications
+---
+#nodejs It is used for server-side programming, and primarily deployed for non-blocking, event-driven servers, such as traditional web sites and back-end API services, but was originally designed with real-time, push-based architectures in mind
+#Adding extra package repositories (yum or apt) is one thing many admins will do before any other
+work on a server to ensure that certain packages are available, or are at a later version than the ones
+in the base installation
+#Ansible makes things a little more robust. Even though the following is slightly more verbose, it
+performs the same actions in a more structured way, which is simpler to understand, and works
+with variables other nifty Ansible features we’ll discuss late
+---
+#
+yum installs Node.js (along with all the required packages for npm, Node’s package manager) if
+it’s not present, and allows the EPEL repo to be searched via the enablerepo parameter (you
+could also explicitly disable a repository using disablerepo).
+#dependecies like php may require latter versions
+---
+#Apache Solr is a fast and scalable search server optimized for full-text search, word
+highlighting, faceted search, fast indexing, and more. It’s a very popular search
+server, and it’s pretty easy to install and configure using Ansible
+#error in the ansible is the same as bash
+#galaxy-role-servers: A couple very short playbooks that demonstrate how easy it is to get new servers running leveraging the power of community Ansible Galaxy roles.
+#A Memcached server provides a caching layer that can be used to store and retrieve
+frequently-accessed objects in lieu of slower database storage.
+5,
+#prt: provision lamp stack by vagrant
+#prt: provision lamp stack on aws
+#prt: provision elk stack
+---
+#prt: provision logstash forwarder for nginx
+#prt:provision gluster
+#prt: provision docker container
+---
+#prt: deployment rail and update version
+#prt: deploy mult nodejs app node
+#above with proxy
+---
+#Capistrano’s basic style of deployment is to create dated release directories, then symlink
+the current release into a stable application directory, along with resources that are
+continuous among releases (like logs and uploaded files).
+#Extending things a little further, many organizations use blue-green deployments.
+The basic concept involves bringing up a parallel production infrastructure, then
+switching over to it. The cutover may take only a few milliseconds and no active
+production infrastructure is ever offline during the deployment process
+#Another important aspect of a successful deployment is communication. If you’re
+running playbooks as part of a CI/CD process, or in some other automated fashion,
+use one of the many built-in Ansible notification modules to share the deployment’s
+progress via chat, email, or even text-to-speech on your Mac with the osx_say
+module! Ansible includes easy-to-use notification modules for:
+6,
+#prt: provision ansible tower
+#prt: provision jenkins server
+#prt: Create a Jenkins job to run an Ansible Playbook
+---
+#Unit testing, when applied to applications, is testing of the smallest units of code
+(usually functions or class methods). In Ansible, unit testing would typically apply
+to individual playbooks. You could run individual playbooks in an isolated environment, but it’s often not worth the effort. What is worth your effort is at least checking
+the playbook syntax, to make sure you didn’t just commit a YAML file that will break
+an entire deployment because of a missing quotation mark, or a whitespace issue!
+#Integration testing, which is definitely more valuable when it comes to Ansible, is
+the testing of small groupings of individual units of code, to make sure they work
+correctly together. Breaking your infrastructure definition into many task-specific
+roles and playbooks allows you to do this; if you’ve structured your playbooks so
+they have no or limited dependencies, you could 
+#Functional testing involves the whole shebang. Basically, you set up a complete
+infrastructure environment, and then run tests against it to make sure everything was
+successfully installed, deployed, and configured. Ansible’s own reporting is helpful
+in this kind of testing, and there are external tools available to test infrastructure
+even more deeply
+---
+#Ansible has a debug module, which prints variables or messages
+during playbook execution.
+#Both fail and assert, when triggered, will abort the playbook run, and the only
+difference is in the simplicity of their usage. 
+#Two checks you should include in an automated playbook testing workflow are -
+-syntax-check (which checks the playbook syntax to find quoting, formatting, or
+whitespace errors) and --check (which will run your entire playbook in check mode
+---
+#When using --check mode, certain tasks may need to be forced to run to ensure the
+playbook completes successfully: (e.g. a command task that registers variables used in
+later tasks). You can set check_mode: no to do this
+#Automated testing using a continuous integration tool like Travis CI (which is free
+for public projects and integrated very well with GitHub) allows you to run tests
+against Ansible playbooks or roles you have hosted on GitHub with every commit.
+There are four main things to test when building and maintaining Ansible playbooks
+or roles:
+1. The playbook or role’s syntax (are all the .yml files formatted correctly?).
+2. Whether the playbook or role will run through all the included tasks without
+failing.
+3. The playbook or role’s idempotence (if run again, it should not make any
+changes!).
+4. The playbook or role’s success (does the role do what it should be doing?):
+7,
+--
+#prt: Testing on multiple OSes with Docker
+#Serverspec167 is a tool to help automate server tests using RSpec tests, which use a
+Ruby-like DSL to ensure your server configuration matches your expectations. In a
+sense, it’s another way of building well-tested infrastructure.
+#prt: elk step ensure dir exist in elk featbeat is error when run with vagrant user (?)
