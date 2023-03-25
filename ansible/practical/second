@@ -24,30 +24,24 @@ https://my.ciena.com/CienaPortal/s/question/0D50z00006OYIaiCAH/how-to-vagrant-pl
 ##vagrant package command
 https://developer.hashicorp.com/vagrant/docs/cli/package
 vagrant package --base=elk_logs_1678714520744_81834 --ouitput="D:\VM\log.box"
-#prt elk: access root script and provision machine through vagrant root.sh
-sudo su -
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
-sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
-systemctl restart sshd.service
-echo -e "123456\n123456" | passwd root
 #prt: elk add ssh keys and run ansible playbook on destined machine
 ssh-keygen -R 192.168.56.90
 sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.90
 ansible-playbook -b -i provisioning/elk/inventory provisioning/elk/main.yml -uroot
----
-8,
 #prt elk: trigger run after up
     web.trigger.after :up do |trigger|
       trigger.info = "Provision web server"
       trigger.run = {path: "web.sh"}
+---
+8,
 #prt jenkins: preparation and up
 *disable sync
   config.vm.synced_folder '.', '/vagrant', disabled: true
 *update error: ssh to machine and update: apt-get update
 #prt:deployment: install acl to make chmod work
----
 #prt: deployment dependency issues author can not resolve
 https://github.com/geerlingguy/ansible-for-devops/issues/429
+---
 #prt: docker-flask: root.sn run at machine and docker.sh run at host
 ssh-keygen -R 192.168.56.39
 sshpass -p 123456 ssh-copy-id -o StrictHostKeyChecking=no root@192.168.56.39
@@ -60,4 +54,6 @@ scp -r provisioning/ root@192.168.56.39:/vagrant/
 ansible-playbook provisioning/main.yml -uroot --limit 192.168.56.39
 #prt: drupal change version of php and drupal, run finish but apache not poin to drupal dir
 https://github.com/geerlingguy/ansible-for-devops/issues/524https://github.com/geerlingguy/ansible-for-devops/issues/524
+#prt: drbd, edb upgrade build the disk attached
 ---
+#prt: build ansible playbook to run drbd , edb upgrade
