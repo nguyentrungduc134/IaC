@@ -57,3 +57,4 @@ https://github.com/geerlingguy/ansible-for-devops/issues/524https://github.com/g
 #prt: drbd, edb upgrade build the disk attached
 ---
 #prt: build ansible playbook to run drbd , edb upgrade
+#prt: orchestration to practice ad-hoc commands
