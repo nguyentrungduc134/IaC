@@ -1,12 +1,26 @@
 1
 ---
 #first export aws access key to .bashrc file
+https://computingforgeeks.com/how-to-install-terraform-on-ubuntu/
+$ export AWS_ACCESS_KEY_ID=(your access key id)
+$ export AWS_SECRET_ACCESS_KEY=(your secret access key)
+if install awscli and login already it will be in .aws dir
 ##terraform init create configuration and provider plugins
-#to provision create main.tf , terraform plan, terraform init
+where you store main.tf file
+#to provision create main.tf , terraform init, terraform plan, terraform apply
+c2: one-server ec2 run in the region specified
 ---
-#use user_data to configure script run
+#prt: use user_data to configure script run
+c2: one-web run normally
 #terraform use implicit dependencies, parses these dependencies, builds a dependency graph from them
-#terraform use variable to use in and out of the code
+terraform graph
+#prt: terraform use variable to use in and out of the code
+c2: 
+variable "server_port" {
+  description = "The port the server will use for HTTP requests"
+  type        = number
+  default     = 8080
+}
 ---
 #use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
 #use lifecycle create_before_destroy when you replace an instance that is a dependency
