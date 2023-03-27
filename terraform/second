@@ -1,0 +1,16 @@
+7,
+---
+#production-grade infrastructure checklist
+#refactor webserver-cluster 08
+#compose modules to helllo world app
+09-testing-terraform-code/examples/hello-world-app/standalone
+---
+#once a Terraform state file has been written with a newer version of
+Terraform, you can no longer use that state file with any older version of
+Terraform.
+*terraform {
+   # Require Terraform at exactly version 0.12.0
+required_version = "= 0.12.0"
+}
+#Another option for releasing modules is to publish them in the Terraform
+Registry.

@@ -216,3 +216,6 @@ internal details of an existing piece of code without changing its external
 behavior.
 #chage state: terraform state mv command, which has the following syntax:
 terraform state mv <ORIGINAL_REFERENCE> <NEW_REFERENCE>
+$ terraform state mv \
+aws_security_group.instance \
+aws_security_group.cluster_instance
