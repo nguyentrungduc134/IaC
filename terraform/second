@@ -14,3 +14,45 @@ required_version = "= 0.12.0"
 }
 #Another option for releasing modules is to publish them in the Terraform
 Registry.
+#prt: local-exec provisioner
+#prt: remote-exec provisioner
+---
+# Self expressions use the following syntax:
+self.<ATTRIBUTE>
+connection {
+type = "ssh"
+host = self.public_ip
+user = "ubuntu"
+private_key = tls_private_key.example.private_key_pem
+}
+#There are creation-time provisioner and destroy-time provisioner
+# You can use the on_failure argument to instruct Terraform how to handle errors from the
+provisioner:
+---
+#Provisioners can be defined only within a resource, but sometimes, you want to
+execute a provisioner without tying it to a specific resource.You can do this
+using something called the null_resource,
+#The null_resource even has a handy argument called triggers, which takes
+in a map of keys and values. 
+resource "null_resource" "example" {
+* Use UUID to force this null_resource to be recreated on every
+ call to 'terraform apply'
+triggers = {
+uuid = uuid()
+}
+#prt: External data source 
+data "external" "echo" {
+program = ["bash", "-c", "cat /dev/stdin"]
+query = {
+foo = "bar"
+}
+} o
+utput "echo" {
+value = data.external.echo.result
+} o
+utput "echo_foo" {
+value = data.external.echo.result.foo
+}
+---
+8,
+---
