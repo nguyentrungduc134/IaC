@@ -56,3 +56,49 @@ value = data.external.echo.result.foo
 ---
 8,
 ---
+#prt: manual tests directory in examples
+#key testing takeaway #2 is: regularly
+clean up your sandbox environments.
+*use delete tool: cloud-nuke
+#prt: add handler classs to web ruby code
+class Handlers
+def handle(path)
+case pathwhen "/"
+[200, 'text/plain', 'Hello, World']
+when "/api"
+[201, 'application/json', '{"foo":"bar"}']
+else
+[404, 'text/plain', 'Not Found']
+end
+end
+end
+---
+#Here’s what a unit test for the / endpoint looks like:
+class TestWebServer < Test::Unit::TestCase
+def initialize(test_method_name)
+super(test_method_name)
+@handlers = Handlers.new
+end
+def test_unit_hello
+status_code, content_type, body = @handlers.handle("/")
+assert_equal(200, status_code)
+assert_equal('text/plain', content_type)
+assert_equal('Hello, World', body)
+end
+end
+#prt: unit testing module using go lang
+09-testing-terraform-code/test
+#prt: dependency injection
+---
+#prt: intergration test
+#prt: end to end test
+#Static analysys:
+There are several tools that can analyze your Terraform code without running it,
+including:
+terraform validate
+---
+#Property testing
+There are a number of testing tools that focus on validating specific “properties”
+of your infrastructure,
+#prt: application code workflow
+#prt: A Workflow for Deploying Infrastructure Code/review

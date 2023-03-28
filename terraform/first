@@ -23,12 +23,27 @@ variable "server_port" {
 }
 ---
 #use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
+resource "aws_autoscaling_group" "example" {
+launch_configuration = aws_launch_configuration.example.name
+min_size = 2
+max_size = 10
+tag {
+key = "Name"
+value = "terraform-asg-example"
+propagate_at_launch = true
+}
+}
 #use lifecycle create_before_destroy when you replace an instance that is a dependency
+in launch configuration 
+lifecycle {
+create_before_destroy = true
+}
 #data source add api data and make it available in the rest of the code, other source call it's attributes
 --
 2
 ---
 #terraform save state and diff to apply change
+in terraform apply
 #should not save state in version control but best in cloud storage
 #terraform use workspaces to store multiple seperate states
 Terraform workspaces allow you to store your Terraform state in multiple,
