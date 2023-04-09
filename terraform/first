@@ -40,8 +40,6 @@ create_before_destroy = true
 }
 #data source add api data and make it available in the rest of the code, other source call it's attributes
 --
-2
----
 #terraform save state and diff to apply change
 in terraform apply
 #should not save state in version control but best in cloud storage
@@ -52,6 +50,8 @@ separate, named workspaces. Terraform starts with a single workspace called
 is the one you’ll use the entire time. To create a new workspace or switch
 between workspaces, you use the terraform workspace commands.
 ---
+2
+---
 #shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
 #could seperate .tf file because terraform just read .tf file
 #terraform_remote_state is terraform data source that take output of other resource state
@@ -60,7 +60,6 @@ between workspaces, you use the terraform workspace commands.
 #templatefile is a function read file (bash script) and use variable to create template
 templatefile(path, vars)
 #rendered attribute: result of template
-3
 ---
 #Modules are reusable Terraform configurations (use in many enviroments stage/prod)
 #could define variable parameters in module and input it in main.tf, also could output from module
@@ -69,6 +68,7 @@ templatefile(path, vars)
 #use path. reference to read module file location
 #use seperate resources instead of inline blocks allow you to add custome config latter to that resource
 #best to store module and live to seperate repos in github
+3
 ---
 #use tag to version the module code in git, change it for prod when it's ready 
 #prt: c2: install terraform and setup aws
@@ -92,7 +92,6 @@ problem with this approach is that all of your Terraform state is now stored in 
 single file, too, and a mistake anywhere could break everything.
 #prt: c3 use seperate workspaces
 #prt: c3 provision web server cluster with seperate layout
-4,
 ---
 #terraform_remote_state. You can use this data source to fetch the
 Terraform state file stored by another set of Terraform configurations in a
@@ -107,6 +106,7 @@ using the aws_secretsmanager_secret_version data source:
 Terraform (e.g., in a password manager such as 1Password, LastPass, or OS X
 Keychain) and to pass the secret into Terraform via an environment variable. To
 do that, declare a variable called db_password in stage/datastores/mysql/variables.tf:
+4,
 ---
 #All of the database’s output variables are stored in the state file and you can read
 them from the terraform_remote_state data source using an attribute
@@ -147,7 +147,6 @@ variables
 #Local values allow you to assign a name to any Terraform expression, and to use
 that name throughout the module. These names are only visible within the
 module, so they will have no impact on other modules, and you can’t overridethese values from outside of the module.
-5,
 ---
 #In Terraform, a module can also return values. Again, you do this using a
 mechanism you already know: output variables. You can add the ASG name as
@@ -161,6 +160,7 @@ Returns the filesystem path of the module where the expression is defined.
 path.root
 Returns the filesystem path of the root module.
 path.cwd
+5,
 ---
 #The easiest way to create a
 versioned module is to put the code for the module in a separate Git repository
