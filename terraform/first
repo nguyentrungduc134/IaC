@@ -187,7 +187,6 @@ webserver-cluster module.
 confused with the for_each expression you saw in the previous section). The
 basic syntax of a for expression is:
 [for <ITEM> in <LIST> : <OUTPUT>] 
-6,
 ---
 #Terraform’s for expression also allows you to loop over a map using the
 following syntax:
@@ -196,6 +195,7 @@ following syntax:
 instead of a dollar sign and curly braces (${…}), you use a percent sign and curly
 braces (%{…}).
 #prt: c5 conditionals using count and contidtional expression
+6,
 ---
 #prt: The goal is to attach one of these IAM policies to neo, based on the value of a
 new input variable called give_neo_cloudwatch_full_
