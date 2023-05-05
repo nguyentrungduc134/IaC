@@ -65,3 +65,6 @@ disable share, error at the script end: Job for oracle-rdbms.service failed beca
 #prt: kubenetes change: basic root.sh, kube.sh, add mem and cpu for master
 #prt: kube pull code that upgrade version and fix dependency issue
 https://github.com/geerlingguy/ansible-for-devops/pull/471/commits/f5006eecadde7c644d7295e36458a84d88eeafb9
+---
+9,
+#vboxmanage modifyvm oldname --name new 

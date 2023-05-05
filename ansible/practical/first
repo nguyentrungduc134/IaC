@@ -42,14 +42,13 @@ c
 ansible <pattern> -m <module_name> -a "<module options>"
 ansible webservers -m service -a "name=httpd state=restarted"
 ---
-2a
 #idempotence: check before running, reusable
 #with_items: variable list
 1.1
 #state: state of service
 1.1
 ---
-b
+2
 # playbook: --limit limit host, --list-hosts
 ansible all -m [module] -a "[module options]" --limit "host1,host2"
 ansible all -m [module] -a "[module options]" --limit 'group1'
@@ -65,7 +64,6 @@ c
       register: filesdb
 #changed_when: specify the condition of change to ansible
 ---
-3a
 LAMP
 #when: specify the condition to do something
     - name: Create a new ext4 primary partition
@@ -83,7 +81,7 @@ b
 #Jinja2 template can use variable in it to provide apache config
 #failed_when: specify condition of fail to ansible
 ---
-c
+3
 #ignore_errors: ignore known error
     - name: backup repos
       shell:
