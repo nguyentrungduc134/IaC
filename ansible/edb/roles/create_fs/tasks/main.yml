@@ -10,6 +10,8 @@
       shell:
         mv `ls /etc/yum.repos.d/*.repo -I local.repo` /tmp/
       ignore_errors: yes
+      args:
+        creates: /etc/yum.repos.d/local.repo
     - name: create file local repos
       file:
         path: /etc/yum.repos.d/local.repo

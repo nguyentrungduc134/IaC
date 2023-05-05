@@ -1,2 +1,6 @@
 ---
 # handlers file for installpg9
+   - name: expor variables
+     shell:
+       source /home/pgtest/.bash_profile
+     become_user: pgtest

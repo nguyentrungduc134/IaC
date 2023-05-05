@@ -16,6 +16,8 @@
     - name: install edb 9
       shell:
         /"{{ db_install_file }}" --mode unattended --superaccount {{ user_name }} --serviceaccount {{ user_name }} --datadir {{ data_dir }} --installer-language en --serverport 5445 --prefix {{ install_dir }} --locale en_US.utf8 --superpassword 123456
+      args:
+       creates: "{{ data_dir }}/pg_hba.conf"
     - name: change ownership of data dir and install dir
       file:
         path: "{{ item }}"
@@ -36,10 +38,7 @@
         - "export PGUSER=pgtest"
         - "export PGPORT=5445"
       become_user: pgtest
-    - name: expor the saved variables
-      shell:
-        source /home/pgtest/.bash_profile
-      become_user: pgtest
+      notify: expor variables
     - name: create sql file to import
       file:
         path: /home/pgtest/init.sql
