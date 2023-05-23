@@ -1,0 +1,9 @@
+self.<ATTRIBUTE>
+connection {
+type = "ssh"
+host = self.public_ip
+user = "ubuntu"
+private_key = tls_private_key.example.private_key_pem
+}
+
+~/IaC/terraform/code/terraform/08-production-grade-infrastructure/more-than-terraform/remote-exec-provisioner
