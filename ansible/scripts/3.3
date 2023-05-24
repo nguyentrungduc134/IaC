@@ -1,0 +1,12 @@
+https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_delegation.html
+---
+# ...
+
+  tasks:
+    - name: Take out of load balancer pool
+      local_action: ansible.builtin.command /usr/bin/take_out_of_pool {{ inventory_hostname }}
+
+# ...
+
+    - name: Add back to load balancer pool
+      local_action: ansible.builtin.command /usr/bin/add_back_to_pool {{ inventory_hostname }}

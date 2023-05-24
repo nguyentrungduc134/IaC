@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+  - name: ssh_no_pass
+    register: lsout
+    shell: |
+      ssh-keygen -q -t rsa
+      sshpass -p "123456" ssh-copy-id -o StrictHostKeyChecking=no root@db01
+      sshpass -p "123456" ssh-copy-id -o StrictHostKeyChecking=no root@db02
+      sshpass -p "123456" ssh-copy-id -o StrictHostKeyChecking=no root@quorum
+  - debug:
+      var: lsout.stdout_lines
+      #ssh-keygen -R your-hostname   

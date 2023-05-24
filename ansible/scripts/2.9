@@ -1,0 +1,22 @@
+edb
+#~/IaC/ansible/edb/roles/installpg9/handlers
+---
+# handlers file for installpg9
+   - name: expor variables
+     shell:
+       source /home/pgtest/.bash_profile
+     become_user: pgtest
+#notify
+   - name: expor all enviroment variables related to the install, must be correct
+      lineinfile:
+        path: /home/pgtest/.bash_profile
+        line: "{{ item }}"
+      with_items:
+        - "export EDBHOME={{ install_dir }}"
+        - "export PATH=$EDBHOME/bin:$PATH"
+        - "export PGDATA={{ data_dir }}"
+        - "export PGDATABASE=edb"
+        - "export PGUSER=pgtest"
+        - "export PGPORT=5445"
+      become_user: pgtest
+      notify: expor variables

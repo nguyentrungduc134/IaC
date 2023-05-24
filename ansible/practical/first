@@ -78,6 +78,7 @@ LAMP
 ---
 b
 #file module can create file and link
+edb
 #Jinja2 template can use variable in it to provide apache config
 #failed_when: specify condition of fail to ansible
 ---

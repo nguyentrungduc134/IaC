@@ -1,0 +1,2 @@
+ansible-playbook foo.yml --check
+#simulate only
