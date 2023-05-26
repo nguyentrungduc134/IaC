@@ -56,7 +56,7 @@ value = data.external.echo.result.foo
 ---
 8,
 ---
-#prt: manual tests directory in examples
+#prt: manual tests directory in examples chap 7, 09....
 #key testing takeaway #2 is: regularly
 clean up your sandbox environments.
 *use delete tool: cloud-nuke

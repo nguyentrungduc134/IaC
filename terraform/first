@@ -85,7 +85,7 @@ default = true
 #terraform save state and diff to apply change
 in terraform apply
 #should not save state in version control but best in cloud storage
-chap 3/global
+IaC/terraform/code/terraform/03-terraform-state/file-layout-example/global/s3 chap 3/global
 resource "aws_s3_bucket" "terraform_state" {
 
   bucket = var.bucket_name
