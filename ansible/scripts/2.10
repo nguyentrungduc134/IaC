@@ -1,0 +1,4 @@
+   - name: create sql file to import
+      file:
+        path: /home/pgtest/init.sql
+        state: touch

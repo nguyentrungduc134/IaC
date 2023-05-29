@@ -1,0 +1,10 @@
+  - name: add to hostfile
+      lineinfile:
+         path: /etc/hosts
+         line: "{{ item }}"
+         state: present
+         backup: yes
+      with_items:
+        - "{{ hostvars.db01.ansible_eth1.ipv4.address }} {{ hostvars.db01.ansible_hostname }}"
+        - "{{ hostvars.db02.ansible_eth1.ipv4.address }} {{ hostvars.db02.ansible_hostname }}"
+        - "{{ hostvars.quorum.ansible_eth1.ipv4.address }} {{ hostvars.quorum.ansible_hostname }}"

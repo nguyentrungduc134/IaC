@@ -1,0 +1,6 @@
+   - name: backup repos
+      shell:
+        mv  /tmp/
+      ignore_errors: yes
+      args:
+         creates: /etc/yum.repos.d/local.repo

@@ -1,0 +1,9 @@
+--- YAML start, host:all host to run, tasks: task to run, name: task, yum: module
+---
+- hosts: drbd
+  become: yes
+  become_user: root
+  become_method: su
+  tasks:
+    - name: add to hostfile
+      lineinfile:
