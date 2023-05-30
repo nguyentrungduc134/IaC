@@ -1,0 +1,5 @@
+- hosts: all
+  become: yes
+  tasks:
+  - dnf: name=chrony state=present
+  - service: name=chronyd state=started enabled=yes

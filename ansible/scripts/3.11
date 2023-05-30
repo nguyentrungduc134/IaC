@@ -1,0 +1,2 @@
+$ ansible-config init --disabled > ansible.cfg
+https://docs.ansible.com/ansible/latest/reference_appendices/config.html

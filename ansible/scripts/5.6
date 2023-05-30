@@ -1,0 +1,29 @@
+[ansible@DESKTOP-7A8ELQH docker]$ cat main.yml
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Ensure Docker image is built from the test Dockerfile.
+      docker_image:
+        name: test
+        source: build
+        build:
+          path: test
+        state: present
+
+    - name: Ensure the test container is running.
+      docker_container:
+        image: test:latest
+        name: test
+        state: started
+[ansible@DESKTOP-7A8ELQH docker]$ cat test/
+cat: test/: Is a directory
+[ansible@DESKTOP-7A8ELQH docker]$ cat test/Dockerfile
+# Build an example Docker container image.
+FROM busybox
+LABEL maintainer="Jeff Geerling"
+
+# Run a command when the container starts.
+CMD ["/bin/true"]
+[ansible@DESKTOP-7A8ELQH docker]$
