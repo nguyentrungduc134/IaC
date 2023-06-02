@@ -1,1 +1,6 @@
 https://blog.devops.dev/forking-workspaces-in-terraform-55ed1ed308f7
+terraform workspace show
+terraform workspace new example1
+terraform plan
+#resource will be created new
+

@@ -1,0 +1,38 @@
+root@terraform:~/IaC/terraform/code/terraform/04-terraform-module/module-example# tree
+.
+├── modules
+│   └── services
+│       └── webserver-cluster
+│           ├── README.md
+│           ├── main.tf
+│           ├── outputs.tf
+│           ├── user-data.sh
+│           └── variables.tf
+├── prod
+│   ├── data-stores
+│   │   └── mysql
+│   │       ├── README.md
+│   │       ├── main.tf
+│   │       ├── outputs.tf
+│   │       └── variables.tf
+│   └── services
+│       └── webserver-cluster
+│           ├── README.md
+│           ├── main.tf
+│           ├── outputs.tf
+│           └── variables.tf
+└── stage
+    ├── data-stores
+    │   └── mysql
+    │       ├── README.md
+    │       ├── main.tf
+    │       ├── outputs.tf
+    │       └── variables.tf
+    └── services
+        └── webserver-cluster
+            ├── README.md
+            ├── main.tf
+            ├── outputs.tf
+            └── variables.tf
+
+13 directories, 21 files
