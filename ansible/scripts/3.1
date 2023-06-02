@@ -1,6 +1,9 @@
-   - name: backup repos
-      shell:
-        mv  /tmp/
       ignore_errors: yes
       args:
          creates: /etc/yum.repos.d/local.repo
+[ansible@DESKTOP-7A8ELQH scripts]$ cat 3.1
+    - name: backup repos
+      shell:
+        mv /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+
+ROG

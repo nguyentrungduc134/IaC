@@ -1,0 +1,3 @@
+- name: test play
+  hosts: webservers
+  serial: "30%"
