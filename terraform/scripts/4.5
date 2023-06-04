@@ -1,0 +1,68 @@
+[root@terraform 04-terraform-module]# tree
+.
+├── module-example
+│   ├── modules
+│   │   └── services
+│   │       └── webserver-cluster
+│   │           ├── main.tf
+│   │           ├── outputs.tf
+│   │           ├── README.md
+│   │           ├── user-data.sh
+│   │           └── variables.tf
+│   ├── prod
+│   │   ├── data-stores
+│   │   │   └── mysql
+│   │   │       ├── main.tf
+│   │   │       ├── outputs.tf
+│   │   │       ├── README.md
+│   │   │       └── variables.tf
+│   │   └── services
+│   │       └── webserver-cluster
+│   │           ├── main.tf
+│   │           ├── outputs.tf
+│   │           ├── README.md
+│   │           └── variables.tf
+│   └── stage
+│       ├── data-stores
+│       │   └── mysql
+│       │       ├── main.tf
+│       │       ├── outputs.tf
+│       │       ├── README.md
+│       │       └── variables.tf
+│       └── services
+│           └── webserver-cluster
+│               ├── main.tf
+│               ├── outputs.tf
+│               ├── README.md
+│               └── variables.tf
+└── multi-repo-example
+    └── live
+        ├── prod
+        │   ├── data-stores
+        │   │   └── mysql
+        │   │       ├── main.tf
+        │   │       ├── outputs.tf
+        │   │       ├── README.md
+        │   │       └── variables.tf
+        │   └── services
+        │       └── webserver-cluster
+        │           ├── main.tf
+        │           ├── outputs.tf
+        │           ├── README.md
+        │           └── variables.tf
+        └── stage
+            ├── data-stores
+            │   └── mysql
+            │       ├── main.tf
+            │       ├── outputs.tf
+            │       ├── README.md
+            │       └── variables.tf
+            └── services
+                └── webserver-cluster
+                    ├── main.tf
+                    ├── outputs.tf
+                    ├── README.md
+                    └── variables.tf
+
+26 directories, 37 files
+

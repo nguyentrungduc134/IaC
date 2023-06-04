@@ -1,0 +1,16 @@
+In chap 3 web cluster
+#create backendconfig
+# backend.hcl
+bucket = "ducngoc"
+region = "us-east-1"
+dynamodb_table = "justaname"
+encrypt = true
+terraform init -backend-config=backend.hcl
+#add key to main
+terraform {
+   backend "s3" {
+      key = "stage/services/webserver-cluster"
+   }
+}
+#run init and apply
+#still want me to input and change to us-east-1
