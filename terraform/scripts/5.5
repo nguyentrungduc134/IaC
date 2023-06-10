@@ -1,0 +1,12 @@
+#can not use with inline block
+tag {
+key = "Name"
+value = var.cluster_name
+propagate_at_launch = true
+}
+# try to remove it will replace
+variable "user_names" {
+description = "Create IAM users with these names"
+type = list(string)
+default = ["neo", "trinity", "morpheus"]
+}
