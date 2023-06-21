@@ -1,0 +1,12 @@
+variable "hero_thousand_faces" {
+description = "map"
+type = map(string)
+default = {
+neo = "hero"
+trinity = "love interest"
+morpheus = "mentor"
+}
+} o
+utput "bios" {
+value = [for name, role in var.hero_thousand_faces : " is the "]
+}
