@@ -312,3 +312,4 @@ terraform state mv <ORIGINAL_REFERENCE> <NEW_REFERENCE>
 $ terraform state mv \
 aws_security_group.instance \
 aws_security_group.cluster_instance
+https://developer.hashicorp.com/terraform/cli/commands/state/mv
