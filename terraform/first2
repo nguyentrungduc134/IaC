@@ -45,7 +45,9 @@ c2: one-web run normally
               EOF
 
   user_data_replace_on_change = true
-
+*If set to true, then a change to user_data or user_data_base64  will trigger a destroy and recreate of the resource as per the previous behaviour.
+https://github.com/hashicorp/terraform-provider-aws/issues/23315
+https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest
 #terraform use implicit dependencies, parses these dependencies, builds a dependency graph from them
 terraform graph
 #prt: terraform use variable to use in and out of the code
@@ -56,24 +58,85 @@ variable "server_port" {
   default     = 8080
 }
 ---
+#Target groups route requests to one or more registered targets, such as EC2 instances, using the protocol and port number that you specify. You can register a target with multiple target groups. You can configure health checks on a per target group basis. Health checks are performed on all targets registered to a target group that is specified in a listener rule for your load balancer.
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html
+resource "aws_lb_target_group" "asg" {
+
+  name = var.alb_name
+
+  port     = var.server_port
+  protocol = "HTTP"
+  vpc_id   = data.aws_vpc.default.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 15
+    timeout             = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+resource "aws_lb_listener_rule" "asg" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 100
+
+  condition {
+    path_pattern {
+      values = ["*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.asg.arn
+  }
+}
+
+
 #use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
 chap 2 web_cluster
+resource "aws_launch_configuration" "example" {
+  image_id        = "ami-0fb653ca2d3203ac1"
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.instance.id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              echo "Hello, World" > index.html
+              nohup busybox httpd -f -p ${var.server_port} &
+              EOF
+
+  # Required when using a launch configuration with an auto scaling group.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 resource "aws_autoscaling_group" "example" {
-launch_configuration = aws_launch_configuration.example.name
-min_size = 2
-max_size = 10
-tag {
-key = "Name"
-value = "terraform-asg-example"
-propagate_at_launch = true
+  launch_configuration = aws_launch_configuration.example.name
+  vpc_zone_identifier  = data.aws_subnets.default.ids
+
+  target_group_arns = [aws_lb_target_group.asg.arn]
+  health_check_type = "ELB"
+
+  min_size = 2
+  max_size = 10
+
+  tag {
+    key                 = "Name"
+    value               = "terraform-asg-example"
+    propagate_at_launch = true
+  }
 }
-}
+
 #use lifecycle create_before_destroy when you replace an instance that is a dependency
 chap 2 web-cluster
 in launch configuration 
 lifecycle {
 create_before_destroy = true
 }
+---
 #data source add api data and make it available in the rest of the code, other source call it's attributes
 data "<PROVIDER>_<TYPE>" "<NAME>" {
 [CONFIG ...]
@@ -81,7 +144,6 @@ data "<PROVIDER>_<TYPE>" "<NAME>" {
 data "aws_vpc" "default" {
 default = true
 }
---
 #terraform save state and diff to apply change
 in terraform apply
 #should not save state in version control but best in cloud storage
@@ -90,15 +152,41 @@ resource "aws_s3_bucket" "terraform_state" {
 
   bucket = var.bucket_name
 }
+---
+2.
 #terraform use workspaces to store multiple seperate states
 Terraform workspaces allow you to store your Terraform state in multiple,
 separate, named workspaces. Terraform starts with a single workspace called
 “default,” and if you never explicitly specify a workspace, the default workspace
 is the one you’ll use the entire time. To create a new workspace or switch
 between workspaces, you use the terraform workspace commands.
+#An expression in Terraform is anything that returns a value. One particularly useful type of expression is a reference, which allows you to access values from other parts of your code. To access the ID of the security
+group resource, you are going to need to use a resource attribute reference, which uses the following syntax:
+<PROVIDER>_<TYPE>.<NAME>.<ATTRIBUTE>
+The security group exports an attribute called id , so the
+expression to reference it will look like this:
+aws_security_group.instance.id
+#Application Load Balancer (ALB)
+Best suited for load balancing of HTTP and HTTPS traffic. Operates at the
+application layer (Layer 7) of the OSI model.
+Network Load Balancer (NLB)
+Best suited for load balancing of TCP, UDP, and TLS traffic. Can scale up
+and down in response to load faster than the ALB (the NLB is designed to
+scale to tens of millions of requests per second). Operates at the transport
+layer (Layer 4) of the OSI model.
 ---
-2
----
+#The first step is to create the ALB itself using the aws_lb resource:
+The next step is to define a listener for this ALB using the aws_lb_listener
+resource:
+Note that, by default, all AWS resources, including ALBs, don’t allow any
+incoming or outgoing traffic, so you need to create a new security group
+specifically for the ALB.
+#You should also update the health_check_type to "ELB". The default
+health_check_type is "EC2", which is a minimal health check that considers
+an Instance unhealthy only if the AWS hypervisor says the VM is completely
+down or unreachable. The "ELB" health check is more robust, because it
+instructs the ASG to use the target group’s health check to determine whether anInstance is healthy and to automatically replace Instances if the target group
+reports them as unhealthy. 
 #shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
 .
 ├── global
@@ -122,7 +210,39 @@ between workspaces, you use the terraform workspace commands.
             ├── user-data.sh
             └── variables.tf
 
+---
 #could seperate .tf file because terraform just read .tf file
+#create an S3 bucket by using the aws_s3_bucket resource:
+resource "aws_s3_bucket" "terraform_state" {
+
+  bucket = var.bucket_name
+
+  // This is only here so we can destroy the bucket as part of automated tests. You should not copy this for production
+  // usage
+  force_destroy = true
+
+}
+
+*# Enable versioning so you can see the full revision history of your
+*# state files
+resource "aws_s3_bucket_versioning" "enabled" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+*# Enable server-side encryption by default
+resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 #terraform_remote_state is terraform data source that take output of other resource state
 data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>
 echo "${data.terraform_remote_state.db.outputs.address}" >> index.html
