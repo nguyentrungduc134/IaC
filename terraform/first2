@@ -243,31 +243,184 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "default" {
   }
 }
 
+#Next, you need to create a DynamoDB table to use for locking. DynamoDB is
+Amazon’s distributed key–value store. It supports strongly consistent reads and
+conditional writes, which are all the ingredients you need for a distributed lock
+system.
+To use DynamoDB for locking with Terraform, you must create a DynamoDB
+table that has a primary key called LockID 
+03-terraform-state/file-layout-example/global/s3
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = var.table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+---
+#To configure Terraform to store the state in your S3 bucket (with encryption and
+4locking), you need to add a backend configuration to your Terraform code. This
+is configuration for Terraform itself, so it resides within a terraform block, and
+has the following syntax:
+  backend "s3" {
+
+    # This backend configuration is filled in automatically at test time by Terratest. If you wish to run this example
+    # manually, uncomment and fill in the config below.
+
+    # bucket         = "<YOUR S3 BUCKET>"
+    # key            = "<SOME PATH>/terraform.tfstate"
+    # region         = "us-east-2"
+    # dynamodb_table = "<YOUR DYNAMODB TABLE>"
+    # encrypt        = true
+
+  }
+}
+
+# you ever wanted to delete the S3 bucket and DynamoDB table, you’d have to
+do this two-step process in reverse:
+1. Go to the Terraform code, remove the backend configuration, and rerun
+terraform init to copy the Terraform state back to your local disk.
+2. Run terraform destroy to delete the S3 bucket and DynamoDB table.
 #terraform_remote_state is terraform data source that take output of other resource state
 data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>
 echo "${data.terraform_remote_state.db.outputs.address}" >> index.html
 ---
-#file reads a file from disk and returns its literal contents without any template interpretation.
+3
+---
+#There are a number of other built-in functions that you can use to manipulate
+strings, numbers, lists, and maps. One of them is the file function:
+file(<PATH>)
+file reads a file from disk and returns its literal contents without any template interpretation.
 file("user-data.sh")
 ./code/terraform/03-terraform-state/file-layout-example/stage/services/webserver-cluster/user-data.sh
-#templatefile is a function read file (bash script) and use variable to create template
+#The catch is that the User Data script for the web server cluster needs some
+dynamic data from Terraform, including the server port, database address, and
+database port. When the User Data script was embedded in the Terraform code,
+you used Terraform references and interpolation to fill in these values. This does
+not work with the file function.
+templatefile is a function read file (bash script) and use variable to create template
 templatefile(path, vars)
 For Terraform 0.12 and later, the template_file data source has been superseded by the templatefile function,
+resource "aws_launch_configuration" "example" {
+  image_id        = "ami-0fb653ca2d3203ac1"
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.instance.id]
+
+  # Render the User Data script as a template
+  user_data = templatefile("user-data.sh", {
+    server_port = var.server_port
+    db_address  = data.terraform_remote_state.db.outputs.address
+    db_port     = data.terraform_remote_state.db.outputs.port
+  })
+
+  # Required when using a launch configuration with an auto scaling group.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+To use these
+variables, you’ll need to update stage/services/webserver-cluster/user-data.sh
+script as follows:
+*#!/bin/bash
+cat > index.html <<EOF
+<h1>Hello, World</h1>
+<p>DB address: ${db_address}</p>
+<p>DB port: ${db_port}</p>
+EOF
+nohup busybox httpd -f -p ${server_port} &
 #rendered attribute: result of template
 user_data = data.template_file.user_data.rendered
 ---
 #Modules are reusable Terraform configurations (use in many enviroments stage/prod)
-#could define variable parameters in module and input it in main.tf, also could output from module
+Open up the main.tf file in modules/services/webserver-cluster and remove the
+provider definition. Providers should be configured by the user of the module
+and not by the module itself
+Here’s the
+syntax for using a module:
+module "<NAME>" {
+source = "<SOURCE>"
+[CONFIG ...]
+}
+#there is a
+problem with the webserver-cluster module: all of the names are hardcoded.
+That is, the name of the security groups, ALB, and other resources are all
+hardcoded, so if you use this module more than once, you’ll get name conflict
+errors.could define variable parameters in module and input it in main.tf, also could output from module
+variable "cluster_name" {
+  description = "The name to use for all the cluster resources"
+  type        = string
+}
+
 #local variable is defined in module and can not be inputed ( like http_port)
+in module main file
+locals {
+  http_port    = 80
+  any_port     = 0
+  any_protocol = "-1"
+  tcp_protocol = "tcp"
+  all_ips      = ["0.0.0.0/0"]
+}
+call it use local.<NAME>
 ---
-#use path. reference to read module file location
+#use path. reference to iread module file location
+  user_data = templatefile("${path.module}/user-data.sh", {
+    server_port = var.server_port
+    db_address  = data.terraform_remote_state.db.outputs.address
+    db_port     = data.terraform_remote_state.db.outputs.port
+  })
+
 #use seperate resources instead of inline blocks allow you to add custome config latter to that resource
-#best to store module and live to seperate repos in github
-3
+r
+esource "aws_security_group_rule" "allow_http_inbound" {
+type = "ingress"
+security_group_id = aws_security_group.alb.id
+from_port = local.http_port
+to_port = local.http_port
+protocol = local.tcp_protocol
+cidr_blocks = local.all_ips
+}
+Now, imagine that in the staging environment, you needed to expose an extra
+port, just for testing. This is now easy to do by adding an
+aws_security_group_rule resource to stage/services/webservercluster/main.tf:resource "aws_security_group_rule" "allow_testing_inbound" {
+type = "ingress"
+security_group_id = module.webserver_cluster.alb_security_group_id
+from_port = 12345
+to_port = 12345
+protocol = "tcp"
+cidr_blocks = ["0.0.0.0/0"]
+}
+#In addition to
+file paths, Terraform supports other types of module sources, such as Git URLs,
+Mercurial URLs, and arbitrary HTTP URLs. The easiest way to create a
+versioned module is to put the code for the module in a separate Git repository
+and to set the source parameter to that repository’s URL. That means your
+Terraform code will be spread out across (at least) two repositories:
+modules
+This repo defines reusable modules. Think of each module as a “blueprint”
+that defines a specific part of your infrastructure.
+live
+This repo defines the live infrastructure you’re running in each environment
+(stage, prod, mgmt, etc.). Think of this as the “houses” you built from the
+“blueprints” in the modules repo.
+Now you can use this versioned module in both staging and production by
+specifying a Git URL in the source parameter. 
 ---
-#use tag to version the module code in git, change it for prod when it's ready 
+#use tag to version the module code in git, change it for prod when it's ready
+A particularly useful naming scheme for tags is semantic versioning. This is a
+versioning scheme of the format MAJOR.MINOR.PATCH (e.g., 1.0.4) with specific
+rules on when you should increment each part of the version number. In
+particular, you should increment the
+MAJOR version when you make incompatible API changes,
+MINOR version when you add functionality in a backward-compatible
+manner, and
+PATCH version when you make backward-compatible bug fixes. 
 #prt: c2: install terraform and setup aws
 #prt: c2: provision web server cluster
+---
+4
 ---
 #very time you run Terraform, it records information about what infrastructure it
 created in a Terraform state file. By default, when you run Terraform in the
@@ -276,17 +429,61 @@ contains a custom JSON format that records a mapping from the Terraform
 resources in your configuration files to the representation of those resources in
 the real world. 
 #prt: provision s3 file layout with dynamo db 03-terraform-state/file-layout-example
-#prt: The only solution available as of May 2019 is to take advantage of partial
+#Te second limitation is more painful: the backend block in Terraform does not
+allow you to use any variables or references.
+prt: The only solution available as of May 2019 is to take advantage of partial
 configuration, in which you omit certain parameters from the backend
 configuration in your Terraform code and instead pass those in via -backendconfig command-line arguments when calling terraform init.
+ For example,
+you could extract the repeated backend arguments, such as bucket and region,
+into a separate file called backend.hcl:
+# backend.hcl
+bucket = "terraform-up-and-running-state"
+region = "us-east-2"
+dynamodb_table = "terraform-up-and-running-locks"
+encrypt = true
 ---
 #When you first
 start using Terraform, you might be tempted to define all of your infrastructure
 in a single Terraform file or a single set of Terraform files in one folder. The
 problem with this approach is that all of your Terraform state is now stored in a
 single file, too, and a mistake anywhere could break everything.
+There are two ways you could isolate state
+files:
+Isolation via workspaces
+Useful for quick, isolated tests on the same configuration.
+Isolation via file layout
+Useful for production use cases for which you need strong separation
+between environments.
 #prt: c3 use seperate workspaces
+Inside each of those workspaces, Terraform uses the key you specified in your
+backend configuration, so you should find an example1/workspacesexample/terraform.tfstate and an example2/workspacesexample/terraform.tfstate. In other words, switching to a different workspace is
+equivalent to changing the path where your state file is stored.
+In fact, you can even change how that module behaves based on the workspace
+you’re in by reading the workspace name using the expression
+terraform.workspace. For example, here’s how to set the Instance type to
+t2.medium in the default workspace and t2.micro in all other workspaces (e.g.,
+to save money when experimenting):resource "aws_instance" "example" {
+ami = "ami-0c55b159cbfafe1f0"
+instance_type = terraform.workspace == "default" ? "t2.medium" : "t2.micro"
+}
 #prt: c3 provision web server cluster with seperate layout
+To acheive full isolation between environments, you need to do the following:
+Put the Terraform configuration files for each environment into a
+separate folder. For example, all of the configurations for the staging
+environment can be in a folder called stage and all the configurations
+for the production environment can be in a folder called prod.
+Configure a different backend for each environment, using different
+authentication mechanisms and access controls (e.g., each environment
+could live in a separate AWS account with a separate S3 bucket as a
+backend).
+In fact, you might want to take the isolation concept beyond environments and
+down to the “component” level, where a component is a coherent set of
+resources that you typically deploy together. 
+If you manage the infrastructure for both the VPC
+component and the web server component in the same set of Terraform
+configurations, you are unnecessarily putting your entire network topology at
+risk of breakage 
 ---
 #terraform_remote_state. You can use this data source to fetch the
 Terraform state file stored by another set of Terraform configurations in a
@@ -297,12 +494,63 @@ passwords, in AWS Secrets Manager, which is a managed service AWS offers
 specifically for storing sensitive data. You could use the AWS Secrets Manager
 UI to store the secret and then read the secret back out in your Terraform code
 using the aws_secretsmanager_secret_version data source:
+provider "aws" {
+region = "us-east-2"
+} r
+esource "aws_db_instance" "example" {
+identifier_prefix = "terraform-up-and-running"
+engine = "mysql"
+allocated_storage = 10
+instance_class = "db.t2.micro"
+name = "example_database"
+username = "admin"
+password =
+data.aws_secretsmanager_secret_version.db_password.secret_string
+}
+ data "aws_secretsmanager_secret_version" "db_password" {
+secret_id = "mysql-master-password-stage"
+}
 #The second option for handling secrets is to manage them completely outside of
 Terraform (e.g., in a password manager such as 1Password, LastPass, or OS X
 Keychain) and to pass the secret into Terraform via an environment variable. To
 do that, declare a variable called db_password in stage/datastores/mysql/variables.tf:
-4,
+variable "db_password" {
+  description = "The password for the database"
+  type        = string
+  sensitive   = true
+}
+As a reminder, for each input variable foo defined in your Terraform
+configurations, you can provide Terraform the value of this variable using the
+environment variable TF_VAR_foo. For the db_password input variable, here is
+how you can set the TF_VAR_db_password environment variable on
+Linux/Unix/OS X systems:
+$ export TF_VAR_db_password="(YOUR_DB_PASSWORD)"
+$ terraform apply
+(...)Note that there is intentionally a space before the export command to prevent
+the secret from being stored on disk in your Bash history. An even better way to
+keep secrets from accidentally being stored on disk in plain text is to store them
+in a command-line–friendly secret store, such as pass, and to use a subshell to
+securely read the secret from pass and into an environment variable:
+$ export TF_VAR_db_password=$(pass database-password)
+$ terraform apply
+(...)
 ---
+#These outputs(DB address, port) are now also stored in the Terraform state for the database, which
+is in your S3 bucket at the path stage/data-stores/mysql/terraform.tfstate. You
+can get the web server cluster code to read the data from this state file by adding
+the terraform_remote_state data source in stage/services/webservercluster/main.tf:
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = var.db_remote_state_bucket
+    key    = var.db_remote_state_key
+    region = "us-east-2"
+  }
+}
+This terraform_remote_state data source configures the web server cluster
+code to read the state file from the same S3 bucket and folder where the database
+stores its state,
 #All of the database’s output variables are stored in the state file and you can read
 them from the terraform_remote_state data source using an attribute
 reference of the form:
@@ -310,11 +558,13 @@ data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>i
 #Terraform includes a number of built-in functions that you can execute using an
 expression of the form:
 function_name(...)
+---
+5
+
 #When the User Data script was embedded in the Terraform code,
 you used Terraform references and interpolation to fill in these values. This does
 not work with the file function. However, it does work if you use a
 template_file data source.
----
 #The final step is to update the user_data parameter of the
 aws_launch_configuration resource to point to the rendered output attribute
 of the template_file data source:
@@ -322,9 +572,9 @@ of the template_file data source:
 that module in multiple places throughout your code. Instead of having the same
 code copied and pasted in the staging and production environments, you’ll be
 able to have both environments reuse code from the same module
+---
 #, create a new top-level
 folder called modules and move all of the files from stage/services/webservercluster to modules/services/webserver-cluster.
----
 #You can now make use of this module in the staging environment. Here’s the
 syntax for using a module:
 module "<NAME>" {
@@ -339,14 +589,16 @@ or more arguments that are specific to that module
 mechanism you’re already familiar with: input variables. Open up
 modules/services/webserver-cluster/variables.tf and add three new input
 variables
+---
 #Local values allow you to assign a name to any Terraform expression, and to use
 that name throughout the module. These names are only visible within the
 module, so they will have no impact on other modules, and you can’t overridethese values from outside of the module.
----
 #In Terraform, a module can also return values. Again, you do this using a
 mechanism you already know: output variables. You can add the ASG name as
 an output variable in /modules/services/webserver-cluster/outputs.tf as follows:
 #prt: use module to build web-clusters 
+5,
+---
 #you can use an expression known as a path reference, which
 is of the form path.<TYPE>. Terraform supports the following types of path
 references:
@@ -355,13 +607,12 @@ Returns the filesystem path of the module where the expression is defined.
 path.root
 Returns the filesystem path of the root module.
 path.cwd
-5,
----
 #The easiest way to create a
 versioned module is to put the code for the module in a separate Git repository
 and to set the source parameter to that repository’s URL. That means your
 Terraform code will be spread out across (at least) two repositories:
 #prt: c5 use count parameter to provide 3 IAM users live/global/iam/main.tf:
+---
 #every Terraform resource
 has a meta-parameter you can use called count. count is Terraform’s oldest,
 simplest, and most limited iteration construct: all it does is define how many
