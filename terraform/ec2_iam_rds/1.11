@@ -1,0 +1,7 @@
+There are two ways to register a user's public SSH key:
+
+An administrative user can assign a public SSH key to one or more users and provide them with the corresponding private key.
+
+An administrative user can enable self-management for one or more users.
+
+Those users can then specify their own public SSH key.
