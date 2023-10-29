@@ -1,0 +1,9 @@
+1,
+#cloud9 offer IDE with EC2 environment for monthly charge
+test eks from https://developer.hashicorp.com/terraform/tutorials/kubernetes/eks need a terraform account, token and organization
+cloud9: you have to permanently disable temporary aws access credentials
+#Terraform Cloud is a SaaS application that runs Terraform in a stable, remote environment and securely stores state and secrets. 
+https://bobcares.com/blog/no-valid-credential-sources-for-terraform/
+OSS. Terraform is an open-source infrastructure as code software tool that provides a consistent CLI workflow to manage hundreds of cloud services.
+Open your terraform.tf file and comment out the cloud block that configures the Terraform Cloud integration.
+https://developer.hashicorp.com/terraform/tutorials/kubernetes/eks

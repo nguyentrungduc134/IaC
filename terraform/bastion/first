@@ -1,0 +1,30 @@
+1,Ec2 bastion 
+#Need to input variables file like security group, autoscaling subnet id, key pair, buctket to create, region, vpc id. String need to be put in " . Keep the ami because it use user data script. Launch templates enable you to store the parameters (AMI, instance type, security groups, and key pairs etc.) so that you do not need to define these parameters every time you launch a new instance.
+#Data Source: aws_iam_policy_document Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy. Data Source: aws_kms_alias
+Use this data source to get the ARN of a KMS key alias. By using this data source, you can reference key alias without having to hard code the ARN as input. AWS Key Management Service (AWS KMS) lets you create, manage, and control cryptographic keys across your applications and AWS services. 
+#aws_subnet provides details about a specific VPC subnet. This resource can prove useful when a module accepts a subnet ID as an input variable and needs to, for example, determine the ID of the VPC that the subnet belongs to. Data Source: aws_ami
+Use this data source to get the ID of a registered AMI for use in other resources.
+---
+#An Amazon Resource Name (ARN) is an identifier which unambiguously identifies your resources across various AWS offerings. An ARN is usually a combination of the AWS region, service, account ID followed by your resource ID A resource ID is specific to a service (e.g IAM Role, RDS instance) and saves you the trouble of referencing the ARN where you can specify a simple human-readable name.
+#The S3 object data source allows access to the metadata and optionally (see below) content of an object stored inside S3 bucket.
+In this example, we create one Network Load Balance only when the lb_type variable equals “network-lb.” So, if it’s equal, the count value will be 1. If not, it will be zero, which means we will not create that resource.
+#input ingress security group rule in case don't input security group and enable elb, using different ssh port this case
+Set the ssh port using to access bastion and ssh port to access private instances from bastion, output the security group for private instances
+---
+#Data Source: aws_iam_policy_document
+Generates an IAM policy document in JSON format for use with resources that expect policy documents such as aws_iam_policy
+AWS provides AWS Security Token Service (AWS STS) as a web service that enables you to request temporary, limited-privilege credentials for users.
+AssumeRole: Returns a set of temporary security credentials that you can use to access AWS resources. These temporary credentials consist of an access key ID, a secret access key, and a security token. Typically, you use AssumeRole within your account or for cross-account access.
+#Identity-based policies are attached to an IAM user, group, or role. These policies let you specify what that identity can do (its permissions).
+Resource-based policies are attached to a resource. For example, you can attach resource-based policies to Amazon S3 buckets, Amazon SQS queues, VPC endpoints, and AWS Key Management Service encryption keys.
+Use the Principal element in a resource-based JSON policy to specify the principal that is allowed or denied access to a resource.
+
+#You must use the Principal element in resource-based policies.
+Resource-based policies – You can attach resource-based policies to a resource within the service. Resource-based policies include a Principal element to specify which IAM identities can access that resource.
+---
+#Amazon EC2 does not have permission to assume the role. Permission to assume the role is controlled by the trust policy attached to the role, like the example that follows. Use the IAM UpdateAssumeRolePolicy API to update the trust policy.
+use principal to allow service ec2
+assume_role_policy - Policy document associated with the role.
+#AWS supports permissions boundaries for IAM entities (users or roles). A permissions boundary is an advanced feature for using a managed policy to set the maximum permissions that an identity-based policy can grant to an IAM entity.
+#How do roles for Amazon EC2 instances work?
+In the following figure, a developer runs an application on an Amazon EC2 instance that requires access to the S3 bucket named photos. An administrator creates the Get-pics service role and attaches the role to the Amazon EC2 instance. The role includes a permissions policy that grants read-only access to the specified S3 bucket. It also includes a trust policy that allows the Amazon EC2 instance to assume the role and retrieve the temporary credentials. When the application runs on the instance, it can use the role's temporary credentials to access the photos bucket. The administrator doesn't have to grant the developer permission to access the photos bucket, and the developer never has to share or manage credentials.

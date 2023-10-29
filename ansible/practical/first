@@ -205,7 +205,9 @@ even more deeply
 #Ansible has a debug module, which prints variables or messages
 during playbook execution.
 #Both fail and assert, when triggered, will abort the playbook run, and the only
-difference is in the simplicity of their usage. 
+difference is in the simplicity of their usage.
+What’s the difference? Nothing! Both tasks fail perfectly if no tar archive is detected. The real advantage comes into play when you need to chain multiple conditions together, because the assert module will tell you which condition actually failed. This can be very helpful for you as a human debugging the playbook.
+https://blog.veloc1ty.de/2022/10/24/ansible-why-you-should-user-assert-instead-of-failed-when/ 
 #Two checks you should include in an automated playbook testing workflow are -
 -syntax-check (which checks the playbook syntax to find quoting, formatting, or
 whitespace errors) and --check (which will run your entire playbook in check mode

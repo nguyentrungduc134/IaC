@@ -1,0 +1,6 @@
+https://www.youtube.com/watch?v=AWJgEHLOHe0
+https://blog.zabbix.com/handy-tips-11-collect-and-send-custom-metrics-with-zabbix-sender/17452/
+#install zabbix sender, same repo as zabbix
+#on node1 add item with key application.status, type Character, type zabbix trapper
+zabbix_sender -z 192.168.56.99 -s 'node1' -k application.status -o Up
+#success, see at dash board Up

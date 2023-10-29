@@ -1,0 +1,8 @@
+$ terraform plan
+Terraform will perform the following actions:
+# aws_iam_user.example["trinity"] will be destroyed
+- resource "aws_iam_user" "example" {
+- arn = "arn:aws:iam::123456789012:user/trinity" -> null
+- name = "trinity" -> null
+}
+Plan: 0 to add, 0 to change, 1 to destroy

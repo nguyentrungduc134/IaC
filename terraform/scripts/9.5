@@ -1,0 +1,94 @@
+configuration = [
+  {
+    "application_name" : "master",
+    "ami" : "ami-053b0d53c279acc90",
+    "no_of_instances" : "1",
+    "instance_type" : "t2.medium",
+    "subnet_id" : "subnet-0b67083889a1063ec"
+  },
+  {
+    "application_name" : "node1",
+    "ami" : "ami-053b0d53c279acc90",
+    "instance_type" : "t2.micro",
+    "no_of_instances" : "1"
+    "subnet_id" : "subnet-0b67083889a1063ec"
+  }
+
+]
+
+locals {
+  ports_in = [
+    443,
+    80
+  ]
+  ports_out = [
+    0
+  ]
+6443,2379-2380,10250,10251,10252,5473,179,5473
+}
+
+locals {
+  ports_in = [
+    46443,
+2379,
+2380,
+10250,
+10251,
+10252,
+5473,
+179,
+5473
+  ]
+  ports_out = [
+    0
+  ]
+}
+
+resource "aws_security_group" "master" {
+  name        = "master-sg"
+  description = "Security group masterer"
+  vpc_id      = var.vpc_id
+
+  dynamic "ingress" {
+    for_each = toset(local.ports_in)
+    content {
+      description = "Wmaster in"
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+  dynamic "egress" {
+    for_each = toset(local.ports_out)
+    content {
+      description = "Web Traffic to internet"
+      from_port   = egress.value
+      to_port     = egress.value
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+ #temperory allow all
+ resource "aws_security_group" "master" {
+  name        = "master-sg"
+  description = "Security group masterer"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  }
+  https://developer.hashicorp.com/terraform/language/functions/range
+  
+  [aws_security_group.master.id] : show as string

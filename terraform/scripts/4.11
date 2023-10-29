@@ -1,0 +1,26 @@
+#terraform plan
+#fix remote resource to east1
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = var.db_remote_state_bucket
+    key    = var.db_remote_state_key
+    region = "us-east-1"
+  }
+#in module
+/root/IaC/terraform/code/terraform/04-terraform-module/module-example/stage/data-stores/mysql
+init bucket ducngoc
+stage/data-stores/mysql/terraform.tfstate
+dbpass: 12345678
+dbuser: ducngoc
+address = "terraform-up-and-running20230604015633633000000001.cjgbqzhtwyvz.us-east-2.rds.amazonaws.com"
+port = 3306
+stage/services/webserver-cluster/terraform.tfstate
+
+ #Error: couldn't find resource
+│
+│   with aws_launch_configuration.example,
+  Change to valid ami ami-053b0d53c279acc90
+  https://stackoverflow.com/questions/73146187/aws-launch-configuration-couldnt-find-resource-on-terraform-apply/73157842#73157842
+  #success now destroy web and db

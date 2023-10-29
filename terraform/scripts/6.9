@@ -1,0 +1,6 @@
+Change the recurrence parameter on the aws_autoscaling_schedule
+from 0 9 * * *, which means “run at 9 a.m.” to something like 0-59
+9-17 * * *, which means “run every minute from 9 a.m. to 5 p.m.
+#script using an external data
+source (see “External data source”), and set the desired_capacity
+parameter of the ASG to the value returned by this script. 
