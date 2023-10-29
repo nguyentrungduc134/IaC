@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-2"
+  region = "us-east-1"
 }
 
 resource "aws_launch_configuration" "example" {
@@ -142,7 +142,7 @@ data "terraform_remote_state" "db" {
   config = {
     bucket = var.db_remote_state_bucket
     key    = var.db_remote_state_key
-    region = "us-east-2"
+    region = "us-east-1"
   }
 }
 
@@ -155,4 +155,9 @@ data "aws_subnets" "default" {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
   }
+}
+terraform {
+   backend "s3" {
+      key = "stage/services/webserver-cluster"
+   }
 }
