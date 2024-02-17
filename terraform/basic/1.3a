@@ -1,0 +1,3 @@
+#Application Load Balancer (ALB)
+Best suited for load balancing of HTTP and HTTPS traffic. Operates at the
+application layer (Layer 7) of the OSI model.

@@ -1,0 +1,3 @@
+#once a Terraform state file has been written with a newer version of
+Terraform, you can no longer use that state file with any older version of
+Terraform.

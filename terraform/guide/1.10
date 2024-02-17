@@ -1,0 +1,14 @@
+#Data sources allow Terraform to use information defined outside of Terraform, defined by another separate Terraform configuration, or modified by functions.
+A data source is accessed via a special kind of resource known as a data resource, declared using a data block:
+#A data block requests that Terraform read from a given data source ("aws_ami") and export the result under the given local name ("example"). The name is used to refer to this resource from elsewhere in the same Terraform module, but has no significance outside of the scope of a module.
+The data source and name together serve as an identifier for a given resource and so must be unique within a module.
+Within the block body (between { and }) are query constraints defined by the data source. Most arguments in this section depend on the data source, and indeed in this example most_recent, owners and tags are all arguments defined specifically for the aws_ami data source.
+#When distinguishing from data resources, the primary kind of resource (as declared by a resource block) is known as a managed resource. Both kinds of resources take arguments and export attributes for use in configuration, but while managed resources cause Terraform to create, update, and delete infrastructure objects, data resources cause Terraform only to read objects. For brevity, managed resources are often referred to just as "resources" when the meaning is clear from context.
+#While many data sources correspond to an infrastructure object type that is accessed via a remote network API, some specialized data sources operate only within Terraform itself, calculating some results and exposing them for use elsewhere.
+For example, local-only data sources exist for rendering templates, reading local files, and rendering AWS IAM policies.
+The behavior of local-only data sources is the same as all other data sources, but their result data exists only temporarily during a Terraform operation, and is re-calculated each time a new plan is created.
+#Data resources have the same dependency resolution behavior as defined for managed resources. Setting the depends_on meta-argument within data blocks defers reading of the data source until after all changes to the dependencies have been applied.
+In order to ensure that data sources are accessing the most up to date information possible in a wide variety of use cases, arguments directly referencing managed resources are treated the same as if the resource was listed in depends_on. This behavior can be avoided when desired by indirectly referencing the managed resource values through a local value, unless the data resource itself has custom conditions.
+#You can use precondition and postcondition blocks to specify assumptions and guarantees about how the data source operates. 
+
+

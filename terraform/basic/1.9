@@ -1,0 +1,28 @@
+#terraform_remote_state. You can use this data source to fetch the
+Terraform state file stored by another set of Terraform configurations in a
+completely read-only manner.
+#One option for handling secrets is to use a Terraform data source to read the
+secrets from a secret store. For example, you can store secrets, such as database
+passwords, in AWS Secrets Manager, which is a managed service AWS offers
+specifically for storing sensitive data. You could use the AWS Secrets Manager
+UI to store the secret and then read the secret back out in your Terraform code
+using the aws_secretsmanager_secret_version data source:
+#The second option for handling secrets is to manage them completely outside of
+Terraform (e.g., in a password manager such as 1Password, LastPass, or OS X
+Keychain) and to pass the secret into Terraform via an environment variable. To
+do that, declare a variable called db_password in stage/datastores/mysql/variables.tf:
+variable "db_password" 
+As a reminder, for each input variable foo defined in your Terraform
+configurations, you can provide Terraform the value of this variable using the
+environment variable TF_VAR_foo. For the db_password input variable, here is
+how you can set the TF_VAR_db_password environment variable on
+Linux/Unix/OS X systems:
+$ export TF_VAR_db_password="(YOUR_DB_PASSWORD)"
+$ terraform apply
+Note that there is intentionally a space before the export command to prevent
+the secret from being stored on disk in your Bash history. An even better way to
+keep secrets from accidentally being stored on disk in plain text is to store them
+in a command-line–friendly secret store, such as pass, and to use a subshell to
+securely read the secret from pass and into an environment variable:
+$ export TF_VAR_db_password=
+$ terraform apply

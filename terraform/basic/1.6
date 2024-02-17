@@ -1,0 +1,38 @@
+#Modules are reusable Terraform configurations (use in many enviroments stage/prod)
+Open up the main.tf file in modules/services/webserver-cluster and remove the
+provider definition. Providers should be configured by the user of the module
+and not by the module itself
+Here’s the
+syntax for using a module:
+module "<NAME>" 
+source = "<SOURCE>"
+#there is a
+problem with the webserver-cluster module: all of the names are hardcoded.
+That is, the name of the security groups, ALB, and other resources are all
+hardcoded, so if you use this module more than once, you’ll get name conflict
+errors.could define variable parameters in module and input it in main.tf, also could output from module
+variable "cluster_name" 
+#local variable is defined in module and can not be inputed ( like http_port)
+in module main file
+call it use local.<NAME>
+#use path. reference to iread module file location
+#use seperate resources instead of inline blocks allow you to add custome config latter to that resource
+resource "aws_security_group_rule" "allow_http_inbound"
+Now, imagine that in the staging environment, you needed to expose an extra
+port, just for testing. This is now easy to do by adding an
+aws_security_group_rule resource to main.tf
+#In addition to
+file paths, Terraform supports other types of module sources, such as Git URLs,
+Mercurial URLs, and arbitrary HTTP URLs. The easiest way to create a
+versioned module is to put the code for the module in a separate Git repository
+and to set the source parameter to that repository’s URL. That means your
+Terraform code will be spread out across (at least) two repositories:
+modules
+This repo defines reusable modules. Think of each module as a “blueprint”
+that defines a specific part of your infrastructure.
+live
+This repo defines the live infrastructure you’re running in each environment
+(stage, prod, mgmt, etc.). Think of this as the “houses” you built from the
+“blueprints” in the modules repo.
+Now you can use this versioned module in both staging and production by
+specifying a Git URL in the source parameter. 

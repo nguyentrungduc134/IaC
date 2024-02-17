@@ -1,0 +1,27 @@
+#prt: Zero-Downtime Deployment
+#Terraform requires that it can compute count and for_each during the plan
+phase, before any resources are created or modified. This means that count and
+for_each can reference hardcoded values, variables, data sources, and even lists
+of resources (so long as the length of the list can be determined during plan), but
+not computed resource outputs.
+#Unfortunately, as of Terraform 0.12.6, using count or for_each on module is
+not supported. According to the Terraform 0.12 release notes, this is something
+HashiCorp plans to add in the future, so depending on when you’re reading this
+book, it might already be available. Check the Terraform CHANGELOG to find
+out.
+#Using create_before_destroy with an ASG is a great technique for zerodowntime deployment, but there is one limitation: it doesn’t work with auto
+scaling policies. Or, to be more accurate, it resets your ASG size back to its
+min_size after each deployment, which can be a problem if you had used autoscaling policies to increase the number of running servers.
+#prt: above issue workaround
+#If you have existing infrastructure, use the import command
+If you created infrastructure before you started using Terraform, you can use
+the terraform import command to add that infrastructure to Terraform’s
+state file, so that Terraform is aware of and can manage that infrastructure.
+# common programming practice is refactoring, in which you restructure the
+internal details of an existing piece of code without changing its external
+behavior.
+#chage state: terraform state mv command, which has the following syntax:
+terraform state mv <ORIGINAL_REFERENCE> <NEW_REFERENCE>
+$ terraform state mv aws_security_group.instance aws_security_group.cluster_instance
+https://developer.hashicorp.com/terraform/cli/commands/state/mv
+

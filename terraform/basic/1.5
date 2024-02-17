@@ -1,0 +1,17 @@
+#terraform_remote_state is terraform data source that take output of other resource state
+data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>
+#There are a number of other built-in functions that you can use to manipulate
+strings, numbers, lists, and maps. One of them is the file function:
+file(<PATH>)
+file reads a file from disk and returns its literal contents without any template interpretation.
+file("user-data.sh")
+#The catch is that the User Data script for the web server cluster needs some
+dynamic data from Terraform, including the server port, database address, and
+database port. When the User Data script was embedded in the Terraform code,
+you used Terraform references and interpolation to fill in these values. This does
+not work with the file function.
+templatefile is a function read file (bash script) and use variable to create template
+templatefile(path, vars)
+For Terraform 0.12 and later, the template_file data source has been superseded by the templatefile function,
+#rendered attribute: result of template
+user_data = data.template_file.user_data.rendered

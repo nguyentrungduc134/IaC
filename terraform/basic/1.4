@@ -1,0 +1,24 @@
+#create an S3 bucket by using the aws_s3_bucket resource:
+resource "aws_s3_bucket" "terraform_state" 
+*# Enable versioning so you can see the full revision history of your
+*# state files
+resource "aws_s3_bucket_versioning" "enabled" {
+ *# Enable server-side encryption by default
+resource "aws_s3_bucket_server_side_encryption_configuration" "default" 
+#Next, you need to create a DynamoDB table to use for locking. DynamoDB is
+Amazon’s distributed key–value store. It supports strongly consistent reads and
+conditional writes, which are all the ingredients you need for a distributed lock
+system.
+To use DynamoDB for locking with Terraform, you must create a DynamoDB
+table that has a primary key called LockID 
+resource "aws_dynamodb_table" "terraform_locks" 
+#To configure Terraform to store the state in your S3 bucket (with encryption and
+4locking), you need to add a backend configuration to your Terraform code. This
+is configuration for Terraform itself, so it resides within a terraform block, and
+has the following syntax:
+  backend "s3" 
+# you ever wanted to delete the S3 bucket and DynamoDB table, you’d have to
+do this two-step process in reverse:
+1. Go to the Terraform code, remove the backend configuration, and rerun
+terraform init to copy the Terraform state back to your local disk.
+2. Run terraform destroy to delete the S3 bucket and DynamoDB table.

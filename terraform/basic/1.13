@@ -1,0 +1,29 @@
+#count cons: inline blocks and delete
+Unfortunately, count has two limitations that significantly reduce its usefulness.
+First, although you can use count to loop over an entire resource, you can’t use
+count within a resource to loop over inline blocks. An inline block is an
+argument you set within a resource of the format:
+resource "xxx" "yyy" 
+The second limitation with count is what happens when you try to change it. When you remove an item from the middle of an array, all the items after it shift
+back by one
+#The for_each expression allows you to loop over lists, sets, and maps to create
+either (a) multiple copies of an entire resource, or (b) multiple copies of an inline
+block within a resource.
+resource "<PROVIDER>_<TYPE>" "<NAME>" {
+for_each = <COLLECTION>
+[CONFIG ...]
+}
+#prt: user foreach expression to create multi users and delete
+three-iam-users-for-each/
+  for_each = toset(var.user_names)
+output "all_users" {
+  value = aws_iam_user.example
+Note the use of toset to convert the var.user_names list into a set. This is
+because for_each supports sets and maps only when used on a resource. When
+for_each loops over this set, it makes each user name available in each.value.
+The user name will also be available in each.key, though you typically use
+each.key only with maps of key/value pairs
+#prt: c5 Let’s now turn our attention to another advantage of for_each: it’s ability to
+create multiple inline blocks within a resource. For example, you can use
+for_each to dynamically generate tag inline blocks for the ASG in the
+webserver-cluster module.

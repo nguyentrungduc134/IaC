@@ -1,0 +1,22 @@
+#These outputs(DB address, port) are now also stored in the Terraform state for the database, which
+is in your S3 bucket at the path terraform.tfstate. You
+can get the web server cluster code to read the data from this state file by adding
+the terraform_remote_state data source in webservercluster/main.tf:
+data "terraform_remote_state" "db" 
+This terraform_remote_state data source configures the web server cluster
+code to read the state file from the same S3 bucket and folder where the database
+stores its state,
+#All of the database’s output variables are stored in the state file and you can read
+them from the terraform_remote_state data source using an attribute
+reference of the form:
+data.terraform_remote_state.<NAME>.outputs.<ATTRIBUTE>i
+#Terraform includes a number of built-in functions that you can execute using an
+expression of the form:
+function_name(...)
+#When the User Data script was embedded in the Terraform code,
+you used Terraform references and interpolation to fill in these values. This does
+not work with the file function. However, it does work if you use a
+template_file data source.
+#The final step is to update the user_data parameter of the
+aws_launch_configuration resource to point to the rendered output attribute
+of the template_file data source:

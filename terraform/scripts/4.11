@@ -10,10 +10,10 @@ data "terraform_remote_state" "db" {
   }
 #in module
 /root/IaC/terraform/code/terraform/04-terraform-module/module-example/stage/data-stores/mysql
-init bucket ducngoc
+init bucket duc
 stage/data-stores/mysql/terraform.tfstate
 dbpass: 12345678
-dbuser: ducngoc
+dbuser: duc
 address = "terraform-up-and-running20230604015633633000000001.cjgbqzhtwyvz.us-east-2.rds.amazonaws.com"
 port = 3306
 stage/services/webserver-cluster/terraform.tfstate

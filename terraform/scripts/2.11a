@@ -1,0 +1,1 @@
+seperate ingress and egress to seperate resource to limit the use of inline block inside resource

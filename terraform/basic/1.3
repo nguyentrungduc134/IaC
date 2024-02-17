@@ -1,0 +1,22 @@
+#Application Load Balancer (ALB)
+Best suited for load balancing of HTTP and HTTPS traffic. Operates at the
+application layer (Layer 7) of the OSI model.
+Network Load Balancer (NLB)
+Best suited for load balancing of TCP, UDP, and TLS traffic. Can scale up
+and down in response to load faster than the ALB (the NLB is designed to
+scale to tens of millions of requests per second). Operates at the transport
+layer (Layer 4) of the OSI model.
+#The first step is to create the ALB itself using the aws_lb resource:
+The next step is to define a listener for this ALB using the aws_lb_listener
+resource:
+Note that, by default, all AWS resources, including ALBs, don’t allow any
+incoming or outgoing traffic, so you need to create a new security group
+specifically for the ALB.
+#You should also update the health_check_type to "ELB". The default
+health_check_type is "EC2", which is a minimal health check that considers
+an Instance unhealthy only if the AWS hypervisor says the VM is completely
+down or unreachable. The "ELB" health check is more robust, because it
+instructs the ASG to use the target group’s health check to determine whether anInstance is healthy and to automatically replace Instances if the target group
+reports them as unhealthy. 
+#shoud use different folder for: stage or prod, components(web,db) and use seperate backend storage (s3)
+#could seperate .tf file because terraform just read .tf file

@@ -1,0 +1,1 @@
+configure cpu alarm for auto scaling group and cpu credit balance alarm for t type cpu when it's lower than 10

@@ -1,0 +1,4 @@
+#prt: Terraform offers similar functionality in the form of a for expression (not to be
+confused with the for_each expression you saw in the previous section). The
+basic syntax of a for expression is:
+[for <ITEM> in <LIST> : <OUTPUT>] 

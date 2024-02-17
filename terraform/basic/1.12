@@ -1,0 +1,28 @@
+#you can use an expression known as a path reference, which
+is of the form path.<TYPE>. Terraform supports the following types of path
+references:
+path.module
+Returns the filesystem path of the module where the expression is defined.
+path.root
+Returns the filesystem path of the root module.
+path.cwd
+#The easiest way to create a
+versioned module is to put the code for the module in a separate Git repository
+and to set the source parameter to that repository’s URL. That means your
+Terraform code will be spread out across (at least) two repositories:
+#prt: c5 use count parameter to provide 3 IAM users iam/main.tf:
+Terraform offers several different looping constructs, each intended to be used in
+a slightly different scenario:
+count parameter, to loop over resources
+for_each expressions, to loop over resources and inline blocks within a
+resource
+for expressions, to loop over lists and maps
+for string directive, to loop over lists and maps within a string
+#every Terraform resource
+has a meta-parameter you can use called count. count is Terraform’s oldest,
+simplest, and most limited iteration construct: all it does is define how many
+copies of the resource to create
+#prt: user count index and seperate variables for naming variables.tf
+user moudle
+resource "aws_iam_user" "example" 
+three-iam-users-module-count

@@ -1,0 +1,3 @@
+There are several tools that can analyze your Terraform code without running it,
+including:
+terraform validate

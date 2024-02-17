@@ -1,0 +1,3 @@
+#The for_each expression allows you to loop over lists, sets, and maps to create
+either (a) multiple copies of an entire resource, or (b) multiple copies of an inline
+block within a resource.

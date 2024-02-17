@@ -1,0 +1,27 @@
+#With Terraform, you can put your code inside of a Terraform module and reuse
+that module in multiple places throughout your code. Instead of having the same
+code copied and pasted in the staging and production environments, you’ll be
+able to have both environments reuse code from the same module
+# create a new top-level
+folder called modules and move all of the files from stage/services/webservercluster to modules/services/webserver-cluster.
+#You can now make use of this module in the staging environment. Here’s the
+syntax for using a module:
+module "<NAME>" {
+source = "<SOURCE>"
+[CONFIG ...]
+}
+where NAME is an identifier you can use throughout the Terraform code to refer to
+this module (e.g., web-service), SOURCE is the path where the module code can
+be found (e.g., modules/services/webserver-cluster), and CONFIG consists of one
+or more arguments that are specific to that module
+#In Terraform, modules can have input parameters, too. To define them, you use a
+mechanism you’re already familiar with: input variables. Open up
+modules/services/webserver-cluster/variables.tf and add three new input
+variables
+#Local values allow you to assign a name to any Terraform expression, and to use
+that name throughout the module. These names are only visible within the
+module, so they will have no impact on other modules, and you can’t overridethese values from outside of the module.
+#In Terraform, a module can also return values. Again, you do this using a
+mechanism you already know: output variables. You can add the ASG name as
+an output variable in /modules/services/webserver-cluster/outputs.tf as follows:
+#prt: use module to build web-clusters 

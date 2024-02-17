@@ -1,0 +1,2 @@
+To use DynamoDB for locking with Terraform, you must create a DynamoDB
+table that has a primary key called LockID

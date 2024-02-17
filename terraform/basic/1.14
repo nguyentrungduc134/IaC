@@ -1,0 +1,21 @@
+#prt: Terraform offers similar functionality in the form of a for expression (not to be
+confused with the for_each expression you saw in the previous section). The
+basic syntax of a for expression is:
+[for <ITEM> in <LIST> : <OUTPUT>] 
+#Terraform’s for expression also allows you to loop over a map using the
+following syntax:
+[for <KEY>, <VALUE> in <MAP> : <OUTPUT>]
+#String directives allow you to use control statements (e.g., for-loops and ifstatements) within strings using a syntax similar to string interpolations, but
+instead of a dollar sign and curly braces (${…}), you use a percent sign and curly
+braces (%{…}).
+#prt: c5 conditionals using count and contidtional expression
+#prt: The goal is to attach one of these IAM policies to neo, based on the value of a
+new input variable called give_neo_cloudwatch_full_
+#prt: The question is, how can you allow the user of the webserver-cluster module
+to pick from one of these User Data scripts?
+#prt: Conditionals with for_each and for Expressions
+#prt: %{ if <CONDITION> }<TRUEVAL>%{ endif }
+where CONDITION is any expression that evaluates to a boolean and TRUEVAL is
+the expression to render if CONDITION evaluates to true. You can optionally
+include an else clause as follows:
+%{ if <CONDITION> }<TRUEVAL>%{ else }<FALSEVAL>%{ endif }

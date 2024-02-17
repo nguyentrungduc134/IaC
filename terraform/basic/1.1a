@@ -1,0 +1,2 @@
+#first export aws access key to .bashrc file
+if install awscli and login already it will be in .aws dir

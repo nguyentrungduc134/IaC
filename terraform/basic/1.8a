@@ -1,0 +1,5 @@
+#When you first
+start using Terraform, you might be tempted to define all of your infrastructure
+in a single Terraform file or a single set of Terraform files in one folder. The
+problem with this approach is that all of your Terraform state is now stored in a
+single file, too, and a mistake anywhere could break everything.

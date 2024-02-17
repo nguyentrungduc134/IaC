@@ -1,0 +1,5 @@
+When you initialize a workspace, Terraform will attempt to download the provider versions specified by the workspace's lock file. If the lock file does not exist, Terraform will use the required_providers block to determine the provider version and create a new lock file. If neither exists, Terraform will search for a matching provider and download the latest version.
+
+Next, Terraform creates the lock file if it does not already exist, or updates it if necessary.
+
+Terraform's lock file, .terraform.lock.hcl, records the versions and hashes of the providers used in this run. This ensures consistent Terraform runs in different environments, since Terraform will download the versions recorded in the lock file for future runs by default.

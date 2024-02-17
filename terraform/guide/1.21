@@ -1,0 +1,7 @@
+This section discusses obfuscation of the secrets and pointers to handle the sensitive data in the Terraform state file, called tfstate. Typically, this is a plain text file that contains data about Terraform deployments, and it includes any sensitive and non-sensitive data about the deployed infrastructure. Sensitive data is visible in plain text in the Terraform state file. To help protect sensitive data, do the following:
+
+When ingesting a secret, choose to immediately rotate the secret. For more information, see Rotate an AWS Secrets Manager secret immediately in the Secrets Manager documentation.
+
+Store the Terraform state file in the centralized AWS account where you operate Secrets Manager. Store the file in an Amazon Simple Storage Service (Amazon S3) bucket, and configure policies that restrict access to it. For more information, see Bucket policies and user policies in the Amazon S3 documentation.
+
+Use an Amazon DynamoDB table to keep the Terraform state file locked. This helps prevent corruption of the file. For more information, see S3 Backend in the Terraform documentation.

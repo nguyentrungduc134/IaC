@@ -1,0 +1,50 @@
+0, https://aleksandr-pezikov.blog/aws-ci-cd-with-terraform-codedeploy-part-1-e52f473999b4
+Follow main.tf file to understand progress
+#Setup EC2 or create AMI first
+#Go to codedeploy console, Read log to see which step wrong
+#Troubleshoot user_data
+https://repost.aws/questions/QUnvPR1W46TS6wQWdf1sK82w/i-am-getting-401-unauthorized-when-i-hit-meta-data-api
+https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/
+#when switch user use heredoc
+https://stackoverflow.com/questions/1988249/how-do-i-use-su-to-execute-the-rest-of-the-bash-script-as-that-user
+
+1, Terraform init and plan
+#Change to Amazon Linux AMI
+#Add user data base64 for lauch template, #!/bin/bash is a must
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template
+#when switch user use heredoc
+https://stackoverflow.com/questions/1988249/how-do-i-use-su-to-execute-the-rest-of-the-bash-script-as-that-user
+Install order example.sh
+
+#!/bin/bash
+sudo yum update -y && sudo yum install ruby wget -y && cd /home/ec2-user && wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install && chmod +x ./install && sudo ./install auto && rm install && sudo systemctl enable codedeploy-agent
+sudo groupadd www && sudo useradd -m -N www && sudo usermod -aG www www && sudo passwd -d www
+sudo -i -u  www bash << EOF
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+. ~/.nvm/nvm.sh
+nvm install v18
+npm init -y >/tmp/test
+npm install express --save>>/tmp/test
+EOF
+
+
+#Follow main.tf file to understand progress
+2, Deploy
+#Push artifact and create deployment
+aws deploy push \
+--application-name appexample-dev-codedeploy-us-east-1 \
+--s3-location s3://appexample-dev-build-artifacts-us-east-1/appbuild_v1.zip \
+--description "deploy v1" \
+--source . \
+--region us-east-1
+To deploy with this revision, run:
+aws deploy create-deployment --application-name appexample-dev-codedeploy-us-east-1 --s3-location bucket=appexample-dev-build-artifacts-us-east-1,key=appbuild_v1.zip,bundleType=zip,eTag=85c3fce8a1fc447fad2e61181e0b8ef4 --deployment-group-name <deployment-group-name> --deployment-config-name <deployment-config-name> --description <description>
+
+#Create deployment
+ aws deploy create-deployment --application-name appexample-dev-codedeploy-us-east-1 --s3-location bucket=appexample-dev-build-artifacts-us-east-1,key=appbuild_v1.zip,bundleType=zip,eTag=85c3fce8a1fc447fad2e61181e0b8ef4  --deployment-group-name appexample-dev-deployment-group-us-east-1 --deployment-config-name CodeDeployDefault.AllAtOnce --description "deployment 1" --region us-east-1  
+
+#Go to codedeploy console, Read log to see which step wrong
+
+curl http://url:3000
+
+

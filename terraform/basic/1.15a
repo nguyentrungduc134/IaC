@@ -1,0 +1,2 @@
+#Using create_before_destroy with an ASG is a great technique for zerodowntime deployment, but there is one limitation: it doesn’t work with auto
+scaling policies.

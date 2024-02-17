@@ -1,0 +1,20 @@
+#data source add api data and make it available in the rest of the code, other source call it's attributes
+data "<PROVIDER>_<TYPE>" "<NAME>" {
+data "aws_vpc" "default" {
+default = true
+#terraform save state and diff to apply change
+in terraform apply
+#should not save state in version control but best in cloud storage
+resource "aws_s3_bucket" "terraform_state" 
+#terraform use workspaces to store multiple seperate states
+Terraform workspaces allow you to store your Terraform state in multiple,
+separate, named workspaces. Terraform starts with a single workspace called
+“default,” and if you never explicitly specify a workspace, the default workspace
+is the one you’ll use the entire time. To create a new workspace or switch
+between workspaces, you use the terraform workspace commands.
+#An expression in Terraform is anything that returns a value. One particularly useful type of expression is a reference, which allows you to access values from other parts of your code. To access the ID of the security
+group resource, you are going to need to use a resource attribute reference, which uses the following syntax:
+<PROVIDER>_<TYPE>.<NAME>.<ATTRIBUTE>
+The security group exports an attribute called id , so the
+expression to reference it will look like this:
+aws_security_group.instance.id

@@ -1,0 +1,10 @@
+#Terraform supports bringing your existing infrastructure under its management. By importing resources into Terraform, you can consistently manage your infrastructure using a common workflow.
+#Terraform stores information about your infrastructure in a state file. To update your infrastructure, you first modify your configuration, and then use Terraform to plan and apply the required changes. Terraform uses the data in your state file to determine the changes it needs to make to your infrastructure.
+As of Terraform 1.5, you can use configuration to import existing resources into your state file with the plan-and-apply workflow. You can still use the terraform import command, but configuration-driven import is safer, works with CICD pipelines, and allows you to preview the import operation before modifying state. You can also optionally use Terraform to generate an initial configuration for the resources you will import.
+Using configuration to import resources involves the following steps:
+Identify the existing infrastructure you will import.
+Define an import block for the resources.
+Run terraform plan to review the import plan and optionally generate configuration for the resources.
+Prune generated configuration to only the required arguments.
+Apply the configuration to bring the resource into your Terraform state file.
+In this tutorial, you will create a Docker container with the Docker CLI. Then, you will declare an import block for the existing Docker container, use Terraform to generate configuration for the container, modify the generated configuration, and use the plan-and-apply workflow to bring the container under Terraform management.

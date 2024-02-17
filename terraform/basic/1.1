@@ -1,0 +1,25 @@
+#first export aws access key to .bashrc file
+if install awscli and login already it will be in .aws dir
+#terraform init create configuration and provider plugins
+where you store main.tf file
+terraform init 
+#to provision create main.tf , terraform init, terraform plan, terraform apply
+c2: one-server ec2 run in the region specified
+#prt: use user_data to configure script run
+c2: one-web run normally
+  user_data_replace_on_change = true
+*If set to true, then a change to user_data or user_data_base64  will trigger a destroy and recreate of the resource as per the previous behaviour.
+#terraform use implicit dependencies, parses these dependencies, builds a dependency graph from them
+terraform graph
+#prt: terraform use variable to use in and out of the code
+variable "server_port" 
+#Target groups route requests to one or more registered targets, such as EC2 instances, using the protocol and port number that you specify. You can register a target with multiple target groups. You can configure health checks on a per target group basis. Health checks are performed on all targets registered to a target group that is specified in a listener rule for your load balancer.
+resource "aws_lb_target_group" "asg" 
+#use aws_autoscaling_group with aws_launch_configuration to provide autoscaling
+chap 2 web_cluster
+resource "aws_launch_configuration" "example" 
+  # Required when using a launch configuration with an auto scaling group.
+  lifecycle 
+    create_before_destroy = true
+resource "aws_autoscaling_group" "example" {
+#use lifecycle create_before_destroy when you replace an instance that is a dependency

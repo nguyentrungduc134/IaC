@@ -1,0 +1,5 @@
+#The catch is that the User Data script for the web server cluster needs some
+dynamic data from Terraform, including the server port, database address, and
+database port. When the User Data script was embedded in the Terraform code,
+you used Terraform references and interpolation to fill in these values. This does
+not work with the file function.

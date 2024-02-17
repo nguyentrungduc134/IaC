@@ -1,0 +1,26 @@
+#production-grade infrastructure checklist
+#refactor webserver-cluster 08
+#compose modules to helllo world app
+#once a Terraform state file has been written with a newer version of
+Terraform, you can no longer use that state file with any older version of
+Terraform.
+#Another option for releasing modules is to publish them in the Terraform
+Registry.
+#prt: local-exec provisioner
+#prt: remote-exec provisioner
+# Self expressions use the following syntax:
+self.<ATTRIBUTE>
+#There are creation-time provisioner and destroy-time provisioner
+# You can use the on_failure argument to instruct Terraform how to handle errors from the
+provisioner:
+#Provisioners can be defined only within a resource, but sometimes, you want to
+execute a provisioner without tying it to a specific resource.You can do this
+using something called the null_resource,
+#The null_resource even has a handy argument called triggers, which takes
+in a map of keys and values. 
+resource "null_resource" "example" {
+* Use UUID to force this null_resource to be recreated on every
+ call to 'terraform apply'
+triggers = {
+uuid = uuid()
+}

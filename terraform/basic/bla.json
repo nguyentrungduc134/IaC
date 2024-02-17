@@ -1,0 +1,13 @@
+{
+  "input": {
+    "text": "#terraform_remote_state. You can use this data source to fetch the\nTerraform state file stored by another set of Terraform configurations in a\ncompletely read-only manner.\n"
+  },
+  "voice": {
+    "languageCode": "en-us",
+    "name": "en-US-Standard-C",
+    "ssmlGender": "FEMALE"
+  },
+  "audioConfig": {
+    "audioEncoding": "MP3"
+  }
+}

@@ -1,0 +1,4 @@
+#These outputs(DB address, port) are now also stored in the Terraform state for the database, which
+is in your S3 bucket at the path terraform.tfstate. You
+can get the web server cluster code to read the data from this state file by adding
+the terraform_remote_state data source in webservercluster/main.tf:

@@ -1,0 +1,5 @@
+Terraform relies on the contents of your workspace's state file to generate an execution plan to make changes to your resources. To ensure the accuracy of the proposed changes, your state file must be up to date.
+
+In Terraform, refreshing your state file updates Terraform's knowledge of your infrastructure, as represented in your state file, with the actual state of your infrastructure. Terraform plan and apply operations run an implicit in-memory refresh as part of their functionality, reconciling any drift from your state file before suggesting infrastructure changes. You can also update your state file without making modifications to your infrastructure using the -refresh-only flag for plan and apply operations.
+
+In this tutorial, you will safely refresh your Terraform state file using the -refresh-only flag. You will also review Terraform's implicit refresh behavior and the advantages of the -refresh-only flag over the deprecated terraform refresh subcommand.

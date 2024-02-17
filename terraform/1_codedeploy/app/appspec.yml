@@ -1,0 +1,21 @@
+version: 0.0
+os: linux
+files:
+  - source: .
+    destination: /home/www/app
+    overwrite: true
+file_exists_behavior: OVERWRITE
+permissions:
+  - object: /home/www/app
+    pattern: '**'
+    owner: www
+    group: www
+    mode: 644
+    type:
+      - file
+      - directory
+hooks:
+  ApplicationStart:
+    - location: scripts/start.sh
+      timeout: 300
+      runas: www

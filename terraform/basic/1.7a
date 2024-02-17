@@ -1,0 +1,2 @@
+#very time you run Terraform, it records information about what infrastructure it
+created in a Terraform state file. 

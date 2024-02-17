@@ -1,0 +1,2 @@
+building a s3 bucket solution to store state file, createting a dynamodb tabe to use with locking
+maybe terraform use dynamo key-value as file/user so they can prevent concurrentcy running/updating of state file lead to conflicting enviroment

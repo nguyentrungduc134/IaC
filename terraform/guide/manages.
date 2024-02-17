@@ -1,0 +1,12 @@
+ Most non-trivial Terraform configurations either integrate with Terraform Cloud or use a backend to store state remotely.
+ This lets multiple people access the state data and work together on that collection of infrastructure resources.
+This page describes how to configure a backend by adding the backend block to your configuration.
+By default, Terraform uses a backend called local, which stores state as a local file on disk. 
+You can also configure one of the built-in backends included in this documentation.
+Some of these backends act like plain remote disks for state files, while others support locking the state while operations are being performed.
+ This helps prevent conflicts and inconsistencies. The built-in backends listed are the only backends. 
+ You cannot load additional backends as plugins.
+ associated with your configuration. If your configuration includes a cloud block, it cannot include a backend block.
+To configure a backend, add a nested backend block within the top-level terraform block. The following example configures the remote backend.
+A configuration can only provide one backend block.
+A backend block cannot refer to named values (like input variables, locals, or data source attributes).

@@ -1,0 +1,9 @@
+#Input variables make your Terraform configuration more flexible by defining values that your end users can assign to customize the configuration. They provide a consistent interface to change how a given configuration behaves.
+Unlike variables found in programming languages, Terraform's input variables don't change values during a Terraform run such as plan, apply, or destroy. Instead, they allow users to more safely customize their infrastructure by assigning different values to the variables before execution begins, rather than editing configuration files manually.
+Variable declarations can appear anywhere in your configuration files. However, we recommend putting them into a separate file called variables.tf to make it easier for users to understand how they can customize the configuration.
+To parameterize an argument with an input variable, you must first define the variable, then replace the hardcoded value with a reference to that variable in your configuration.
+#Entering variable values manually is time consuming and error prone. Instead, you can capture variable values in a file.
+Terraform automatically loads all files in the current directory with the exact name terraform.tfvars or matching *.auto.tfvars. You can also use the -var-file flag to specify other files by name.
+These files use syntax similar to Terraform configuration files (HCL), but they cannot contain configuration such as resource definitions. Like Terraform configuration files, these files can also contain JSON.
+#Terraform configuration supports string interpolation — inserting the output of an expression into a string. This allows you to use variables, local values, and the output of functions to create strings in your configuration.
+Update the names of the security groups to use the project and environment values from the resource_tags map.

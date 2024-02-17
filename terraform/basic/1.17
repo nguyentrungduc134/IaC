@@ -1,0 +1,30 @@
+#prt: External data source 
+data "external" "echo" {
+#prt: manual tests directory in examples chap 7, 09....
+#key testing takeaway #2 is: regularly
+clean up your sandbox environments.
+*use delete tool: cloud-nuke
+#prt: add handler classs to web ruby code
+#Here’s what a unit test for the / endpoint looks like:
+#prt: unit testing module using go lang
+09-testing-terraform-code/test
+#prt: dependency injection
+#prt: intergration test
+#prt: end to end test
+#Static analysys:
+There are several tools that can analyze your Terraform code without running it,
+including:
+terraform validate
+#Property testing
+There are a number of testing tools that focus on validating specific “properties”
+of your infrastructure,
+#prt: application code workflow
+#prt: A Workflow for Deploying Infrastructure Code/review
+#To provision multi machine with multi config, currently not support both "count and foreach" so have to seperate config
+#As discussed earlier, we cannot directly consume our variable configuration  using for_each  if we do that, Terraform would not let us use count on the same block because both are for loop expressions therefore mutually exclusive to each other.
+Having said that. Now we need to find a way to generate repeated resource blocks somewhere outside but not in the aws_instance resource block.
+#We have two local variables named serverconfig and instances
+serverconfig - is to create a dynamic block of server configuration, in a list of objects  format
+instances - to turn multiple nested lists into a single flat list  with flatten
+#Since we have a custom tfvars file we need to use the -var-file during the plan and apply
+#Terraform Create Multiple EC2 with different Configs

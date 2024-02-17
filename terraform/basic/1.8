@@ -1,0 +1,39 @@
+#When you first
+start using Terraform, you might be tempted to define all of your infrastructure
+in a single Terraform file or a single set of Terraform files in one folder. The
+problem with this approach is that all of your Terraform state is now stored in a
+single file, too, and a mistake anywhere could break everything.
+There are two ways you could isolate state
+files:
+Isolation via workspaces
+Useful for quick, isolated tests on the same configuration.
+Isolation via file layout
+Useful for production use cases for which you need strong separation
+between environments.
+#prt: c3 use seperate workspaces
+Inside each of those workspaces, Terraform uses the key you specified in your
+backend configuration, so you should find an example1/terraform.tfstate and an example2/terraform.tfstate. In other words, switching to a different workspace is
+equivalent to changing the path where your state file is stored.
+In fact, you can even change how that module behaves based on the workspace
+you’re in by reading the workspace name using the expression
+terraform.workspace. For example, here’s how to set the Instance type to
+t2.medium in the default workspace and t2.micro in all other workspaces (e.g.,
+to save money when experimenting)
+instance_type = terraform.workspace == "default" ? "t2.medium" : "t2.micro"
+#prt: c3 provision web server cluster with seperate layout
+To acheive full isolation between environments, you need to do the following:
+Put the Terraform configuration files for each environment into a
+separate folder. For example, all of the configurations for the staging
+environment can be in a folder called stage and all the configurations
+for the production environment can be in a folder called prod.
+Configure a different backend for each environment, using different
+authentication mechanisms and access controls (e.g., each environment
+could live in a separate AWS account with a separate S3 bucket as a
+backend).
+In fact, you might want to take the isolation concept beyond environments and
+down to the “component” level, where a component is a coherent set of
+resources that you typically deploy together. 
+If you manage the infrastructure for both the VPC
+component and the web server component in the same set of Terraform
+configurations, you are unnecessarily putting your entire network topology at
+risk of breakage 

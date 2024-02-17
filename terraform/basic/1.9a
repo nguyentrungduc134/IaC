@@ -1,0 +1,3 @@
+#terraform_remote_state. You can use this data source to fetch the
+Terraform state file stored by another set of Terraform configurations in a
+completely read-only manner.

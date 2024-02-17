@@ -1,0 +1,26 @@
+#use tag to version the module code in git, change it for prod when it's ready
+A particularly useful naming scheme for tags is semantic versioning. This is a
+versioning scheme of the format MAJOR.MINOR.PATCH (e.g., 1.0.4) with specific
+rules on when you should increment each part of the version number. In
+particular, you should increment the
+MAJOR version when you make incompatible API changes,
+MINOR version when you add functionality in a backward-compatible
+manner, and
+PATCH version when you make backward-compatible bug fixes. 
+#prt: c2: install terraform and setup aws
+#prt: c2: provision web server cluster
+#very time you run Terraform, it records information about what infrastructure it
+created in a Terraform state file. By default, when you run Terraform in the
+folder /foo/bar, Terraform creates the file /foo/bar/terraform.tfstate. This file
+contains a custom JSON format that records a mapping from the Terraform
+resources in your configuration files to the representation of those resources in
+the real world. 
+#prt: provision s3 file layout with dynamo db 03-terraform-state/file-layout-example
+#The second limitation is more painful: the backend block in Terraform does not
+allow you to use any variables or references.
+prt: The only solution available as of May 2019 is to take advantage of partial
+configuration, in which you omit certain parameters from the backend
+configuration in your Terraform code and instead pass those in via -backendconfig command-line arguments when calling terraform init.
+ For example,
+you could extract the repeated backend arguments, such as bucket and region,
+into a separate file called backend.hcl:
