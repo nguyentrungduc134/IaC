@@ -1,0 +1,32 @@
+#lineinfile check to see if there is this line, can be used with regex
+#chdir, create in command, shell module chdir: run at this dir, create: not run if this file exists
+#include can use include other playbooks
+#inventory file /etc/ansible/hosts
+include host group, single host must put above group
+#need to have ssh key access first to run any simple command
+#basic playbook
+ YAML start, host:all host to run, tasks: task to run, name: task, yum: module
+#inventory multi group [multi:children] [multi:vars]
+#default run parallel, limit using fork -f
+#run multi host, all or limit
+#idempotence: check before running, reusable
+#with_items: variable list
+#state: state of service
+# playbook: --limit limit host, --list-hosts
+#remote-user(-u) --become: sudo run, --become-user: run sudo with user
+#--inventory(-i) specify intentory, -e --extra-vars
+#App .js and npm read json to install dependencies
+#register: used to decide latter whether to run
+#changed_when: specify the condition of change to ansible
+#when: specify the condition to do something
+#pre_task, post_task, seperate with main task
+#handler: at the end, trigger by  notify of changed from a task
+#file module can create file and link
+#Jinja2 template can use variable in it to provide apache config
+#failed_when: specify condition of fail to ansible
+#ignore_errors: ignore known error
+#delegate_to: delegate task to other hosts
+#local_action: task run at localhost
+#ansible-galaxy init role name to init tree of the role
+#role help easy to see run  process, copy codes with same part to the role and replace
+#default dir have default var, easily be replaced in the main playbook, var dir have higher precedence

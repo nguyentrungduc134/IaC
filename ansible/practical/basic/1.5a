@@ -1,0 +1,2 @@
+#Ansible has a debug module, which prints variables or messages
+during playbook execution.

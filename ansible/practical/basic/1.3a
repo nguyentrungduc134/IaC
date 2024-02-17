@@ -1,0 +1,3 @@
+#Apache Solr is a fast and scalable search server optimized for full-text search, word
+highlighting, faceted search, fast indexing, and more. It’s a very popular search
+server, and it’s pretty easy to install and configure using Ansible

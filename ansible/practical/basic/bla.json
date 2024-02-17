@@ -1,0 +1,13 @@
+{
+  "input": {
+    "text": "#setup vagrant wsl the same with windows host (or only wsl) and set some env\n"
+  },
+  "voice": {
+    "languageCode": "en-us",
+    "name": "en-US-Standard-C",
+    "ssmlGender": "FEMALE"
+  },
+  "audioConfig": {
+    "audioEncoding": "MP3"
+  }
+}

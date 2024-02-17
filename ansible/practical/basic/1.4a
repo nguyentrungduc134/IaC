@@ -1,0 +1,3 @@
+#Extending things a little further, many organizations use blue-green deployments.
+The basic concept involves bringing up a parallel production infrastructure, then
+switching over to it.

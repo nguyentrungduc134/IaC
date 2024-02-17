@@ -1,0 +1,25 @@
+#Ansible has a debug module, which prints variables or messages
+during playbook execution.
+#Both fail and assert, when triggered, will abort the playbook run, and the only
+difference is in the simplicity of their usage. 
+#Two checks you should include in an automated playbook testing workflow are -
+-syntax-check (which checks the playbook syntax to find quoting, formatting, or
+whitespace errors) and --check (which will run your entire playbook in check mode
+#When using --check mode, certain tasks may need to be forced to run to ensure the
+playbook completes successfully: (e.g. a command task that registers variables used in
+later tasks). You can set check_mode: no to do this
+#Automated testing using a continuous integration tool like Travis CI (which is free
+for public projects and integrated very well with GitHub) allows you to run tests
+against Ansible playbooks or roles you have hosted on GitHub with every commit.
+There are four main things to test when building and maintaining Ansible playbooks
+or roles:
+1. The playbook or role’s syntax (are all the .yml files formatted correctly?).
+2. Whether the playbook or role will run through all the included tasks without
+failing.
+3. The playbook or role’s idempotence (if run again, it should not make any
+changes!).
+4. The playbook or role’s success (does the role do what it should be doing?):
+#prt: Testing on multiple OSes with Docker
+#Serverspec is a tool to help automate server tests using RSpec tests, which use a
+Ruby-like DSL to ensure your server configuration matches your expectations. In a
+sense, it’s another way of building well-tested infrastructure.
